@@ -11,6 +11,9 @@ jobs:
     services:
       mongo:
         image: mongo:8
+        # Same kernel 6.19+ workaround as docker-compose.yml.
+        env:
+          GLIBC_TUNABLES: glibc.pthread.rseq=1
         ports:
           - 27017:27017
         options: >-

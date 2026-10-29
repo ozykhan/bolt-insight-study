@@ -1,0 +1,307 @@
+{
+  "suite": "moderator",
+  "variant": "v1",
+  "ranAt": "2026-10-29T16:05:15.801Z",
+  "runName": "moderator-v1-2026-10-29T16:05:02.102Z",
+  "experimentUrl": "https://cloud.langfuse.com/project/cmvtk593u07syad0eafghehnj/experiments/results?baseline=1ceabf1db1935b70",
+  "model": "claude-opus-5-5",
+  "promptSources": [
+    "moderator-decide@langfuse:1",
+    "moderator-follow-up@langfuse:1"
+  ],
+  "itemCount": 12,
+  "failedItems": [],
+  "scores": {
+    "decision_correct": {
+      "mean": 1,
+      "n": 12
+    },
+    "follow_up_grounded": {
+      "mean": 1,
+      "n": 7
+    },
+    "follow_up_non_leading": {
+      "mean": 1,
+      "n": 7
+    },
+    "follow_up_single_question": {
+      "mean": 1,
+      "n": 7
+    }
+  },
+  "latencySeconds": 1.9125481144166676,
+  "inputTokens": 775.4166666666666,
+  "outputTokens": 97.83333333333333,
+  "items": [
+    {
+      "id": "m01-vague-choice",
+      "scores": {
+        "decision_correct": 1,
+        "follow_up_grounded": 1,
+        "follow_up_non_leading": 1,
+        "follow_up_single_question": 1
+      },
+      "comments": {
+        "decision_correct": "Expected follow_up, got follow_up: The answer is vague and says nothing about how the decision was made or who influenced it, so it needs probing.",
+        "follow_up_grounded": "It builds directly on the respondent's phrase 'just picked one' by probing the moment of picking.",
+        "follow_up_non_leading": "It offers neutral prompts about place and people without presuming any answer or feeling.",
+        "follow_up_single_question": "1 question mark(s), 21 words."
+      },
+      "latencySeconds": 2.3615481239999934,
+      "inputTokens": 832,
+      "outputTokens": 105,
+      "output": {
+        "decision": {
+          "action": "follow_up",
+          "reason": "The answer is vague and says nothing about how the decision was made or who influenced it, so it needs probing."
+        },
+        "followUp": "What do you remember about the moment you picked it, such as where you were or whether anyone else was involved?"
+      }
+    },
+    {
+      "id": "m02-short-weeknight",
+      "scores": {
+        "decision_correct": 1,
+        "follow_up_grounded": 1,
+        "follow_up_non_leading": 1,
+        "follow_up_single_question": 1
+      },
+      "comments": {
+        "decision_correct": "Expected follow_up, got follow_up: The answer is very short and doesn't reveal how they order (apps vs. direct), how often, or what the routine looks like, so probing is needed to meet the goal.",
+        "follow_up_grounded": "It picks up the respondent's specific mention of ordering something and probes how they do it.",
+        "follow_up_non_leading": "It is open-ended and does not presume a method, app, or feeling.",
+        "follow_up_single_question": "1 question mark(s), 10 words."
+      },
+      "latencySeconds": 3.260037177999999,
+      "inputTokens": 880,
+      "outputTokens": 135,
+      "output": {
+        "decision": {
+          "action": "follow_up",
+          "reason": "The answer is very short and doesn't reveal how they order (apps vs. direct), how often, or what the routine looks like, so probing is needed to meet the goal."
+        },
+        "followUp": "How do you usually go about ordering when that happens?"
+      }
+    },
+    {
+      "id": "m03-emotion-banking",
+      "scores": {
+        "decision_correct": 1,
+        "follow_up_grounded": 1,
+        "follow_up_non_leading": 1,
+        "follow_up_single_question": 1
+      },
+      "comments": {
+        "decision_correct": "Expected follow_up, got follow_up: The respondent mentions confusion and abandoning the app but gives no specifics about what was unclear, which is central to understanding the difficulties.",
+        "follow_up_grounded": "It picks up the respondent's mention of closing the app and not being sure what they were pressing.",
+        "follow_up_non_leading": "It asks openly about the task and events without suggesting a cause or feeling.",
+        "follow_up_single_question": "1 question mark(s), 19 words."
+      },
+      "latencySeconds": 3.464197110999987,
+      "inputTokens": 902,
+      "outputTokens": 135,
+      "output": {
+        "decision": {
+          "action": "follow_up",
+          "reason": "The respondent mentions confusion and abandoning the app but gives no specifics about what was unclear, which is central to understanding the difficulties."
+        },
+        "followUp": "What were you trying to do in the app at that point, and what happened before you closed it?"
+      }
+    },
+    {
+      "id": "m04-detail-pods",
+      "scores": {
+        "decision_correct": 1,
+        "follow_up_grounded": 1,
+        "follow_up_non_leading": 1,
+        "follow_up_single_question": 1
+      },
+      "comments": {
+        "decision_correct": "Expected follow_up, got follow_up: The respondent mentions two reasons, but both are vague: the 'waste thing' is unclear and what the sister said is unexplained, so probing would clarify the main reasons for stopping.",
+        "follow_up_grounded": "It picks up the respondent's specific mention of something their sister said.",
+        "follow_up_non_leading": "The phrase 'stuck with you' is reasonably implied by the respondent citing it as a reason, and the question doesn't suggest what was said.",
+        "follow_up_single_question": "1 question mark(s), 9 words."
+      },
+      "latencySeconds": 1.6257041020000178,
+      "inputTokens": 848,
+      "outputTokens": 182,
+      "output": {
+        "decision": {
+          "action": "follow_up",
+          "reason": "The respondent mentions two reasons, but both are vague: the 'waste thing' is unclear and what the sister said is unexplained, so probing would clarify the main reasons for stopping."
+        },
+        "followUp": "What did your sister say that stuck with you?"
+      }
+    },
+    {
+      "id": "m05-depends",
+      "scores": {
+        "decision_correct": 1,
+        "follow_up_grounded": 1,
+        "follow_up_non_leading": 1,
+        "follow_up_single_question": 1
+      },
+      "comments": {
+        "decision_correct": "Expected follow_up, got follow_up: The answer is vague and gives neither the usual mode of travel nor the reasons, so it's worth probing what it depends on.",
+        "follow_up_grounded": "It builds directly on the respondent's statement that it 'depends on the day'.",
+        "follow_up_non_leading": "It asks openly about what drives the variation without suggesting any particular factor or answer.",
+        "follow_up_single_question": "1 question mark(s), 12 words."
+      },
+      "latencySeconds": 1.3185453269999998,
+      "inputTokens": 852,
+      "outputTokens": 85,
+      "output": {
+        "decision": {
+          "action": "follow_up",
+          "reason": "The answer is vague and gives neither the usual mode of travel nor the reasons, so it's worth probing what it depends on."
+        },
+        "followUp": "What makes the way you travel different from one day to another?"
+      }
+    },
+    {
+      "id": "m06-hedged-refills",
+      "scores": {
+        "decision_correct": 1,
+        "follow_up_grounded": 1,
+        "follow_up_non_leading": 1,
+        "follow_up_single_question": 1
+      },
+      "comments": {
+        "decision_correct": "Expected follow_up, got follow_up: The answer is vague; 'not a hassle' needs clarification about which specific conditions (e.g., easy skipping, cancellation, delivery timing) would make them subscribe.",
+        "follow_up_grounded": "It picks up the respondent's specific word 'hassle' and asks them to unpack it.",
+        "follow_up_non_leading": "It asks openly what hassle means to them without suggesting any particular answer.",
+        "follow_up_single_question": "1 question mark(s), 11 words."
+      },
+      "latencySeconds": 1.3981631650000055,
+      "inputTokens": 858,
+      "outputTokens": 108,
+      "output": {
+        "decision": {
+          "action": "follow_up",
+          "reason": "The answer is vague; 'not a hassle' needs clarification about which specific conditions (e.g., easy skipping, cancellation, delivery timing) would make them subscribe."
+        },
+        "followUp": "What would make a subscription feel like a hassle to you?"
+      }
+    },
+    {
+      "id": "m07-still-vague",
+      "scores": {
+        "decision_correct": 1,
+        "follow_up_grounded": 1,
+        "follow_up_non_leading": 1,
+        "follow_up_single_question": 1
+      },
+      "comments": {
+        "decision_correct": "Expected follow_up, got follow_up: The answer is still vague about what specifically bothered them about the waste, and one follow-up remains to clarify the main reason.",
+        "follow_up_grounded": "It picks up the respondent's specific mention of waste and asks for a concrete moment.",
+        "follow_up_non_leading": "It asks for an example of a concern the respondent already raised, without suggesting what that moment was or how they felt.",
+        "follow_up_single_question": "1 question mark(s), 13 words."
+      },
+      "latencySeconds": 2.5233318800000126,
+      "inputTokens": 894,
+      "outputTokens": 154,
+      "output": {
+        "decision": {
+          "action": "follow_up",
+          "reason": "The answer is still vague about what specifically bothered them about the waste, and one follow-up remains to clarify the main reason."
+        },
+        "followUp": "Could you describe a moment when the waste really stood out to you?"
+      }
+    },
+    {
+      "id": "m08-rich-gym",
+      "scores": {
+        "decision_correct": 1
+      },
+      "comments": {
+        "decision_correct": "Expected next, got next: The respondent clearly identified the trigger: post-New Year overcrowding with repeated long waits for equipment, compounded by dismissive staff, which led them to cancel the same evening."
+      },
+      "latencySeconds": 1.841279343000002,
+      "inputTokens": 682,
+      "outputTokens": 73,
+      "output": {
+        "decision": {
+          "action": "next",
+          "reason": "The respondent clearly identified the trigger: post-New Year overcrowding with repeated long waits for equipment, compounded by dismissive staff, which led them to cancel the same evening."
+        },
+        "followUp": null
+      }
+    },
+    {
+      "id": "m09-rich-delivery",
+      "scores": {
+        "decision_correct": 1
+      },
+      "comments": {
+        "decision_correct": "Expected next, got next: The answer clearly explains the decision process: deals come first, then upfront delivery time with a 40-minute limit, which meets the goal."
+      },
+      "latencySeconds": 1.3416046560000103,
+      "inputTokens": 641,
+      "outputTokens": 57,
+      "output": {
+        "decision": {
+          "action": "next",
+          "reason": "The answer clearly explains the decision process: deals come first, then upfront delivery time with a 40-minute limit, which meets the goal."
+        },
+        "followUp": null
+      }
+    },
+    {
+      "id": "m10-nothing-to-add",
+      "scores": {
+        "decision_correct": 1
+      },
+      "comments": {
+        "decision_correct": "Expected next, got next: The follow-up limit has been reached, and the goal is met: the respondent named both sources and explained their relative trust, rating the health visitor above the online group because of her experience."
+      },
+      "latencySeconds": 1.6777899990000005,
+      "inputTokens": 706,
+      "outputTokens": 67,
+      "output": {
+        "decision": {
+          "action": "next",
+          "reason": "The follow-up limit has been reached, and the goal is met: the respondent named both sources and explained their relative trust, rating the health visitor above the online group because of her experience."
+        },
+        "followUp": null
+      }
+    },
+    {
+      "id": "m11-stop-busy",
+      "scores": {
+        "decision_correct": 1
+      },
+      "comments": {
+        "decision_correct": "Expected end, got end: The respondent explicitly said they have to stop now."
+      },
+      "latencySeconds": 0.9468512249999912,
+      "inputTokens": 608,
+      "outputTokens": 30,
+      "output": {
+        "decision": {
+          "action": "end",
+          "reason": "The respondent explicitly said they have to stop now."
+        },
+        "followUp": null
+      }
+    },
+    {
+      "id": "m12-stop-refuse",
+      "scores": {
+        "decision_correct": 1
+      },
+      "comments": {
+        "decision_correct": "Expected end, got end: The respondent explicitly said they don't want to answer any more questions, so the interview should stop."
+      },
+      "latencySeconds": 1.1915252629999886,
+      "inputTokens": 602,
+      "outputTokens": 43,
+      "output": {
+        "decision": {
+          "action": "end",
+          "reason": "The respondent explicitly said they don't want to answer any more questions, so the interview should stop."
+        },
+        "followUp": null
+      }
+    }
+  ]
+}

@@ -235,7 +235,9 @@ describe('results', () => {
       [{ name: 'moderator', title: 'Moderator', scores: moderatorSuite.scores }],
       [record('v1', [1, 0, 0, 1], 2.04), record('v2', [1, 1, 1, 0], 2.5)],
     );
-    expect(table).toContain('**Moderator**: 4 items, run on 2026-10-30 with test-model');
+    expect(table).toContain(
+      '**Moderator**: 4 items, run on 2026-10-30 (v1: moderator-follow-up@langfuse:1; v2: moderator-follow-up@langfuse:2).',
+    );
     expect(table).toContain('| Follow-ups grounded in the answer | 4 | 50% | 75% | +25 pts |');
     expect(table).toContain('| Decision matches the label | 4 | 100% | 100% | 0 |');
     expect(table).toContain('| Follow-ups not leading | 0 | not run | not run |  |');

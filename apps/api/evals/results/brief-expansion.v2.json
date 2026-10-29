@@ -1,0 +1,695 @@
+{
+  "suite": "brief-expansion",
+  "variant": "v2",
+  "ranAt": "2026-10-29T16:04:58.755Z",
+  "runName": "brief-expansion-v2-2026-10-29T16:03:51.751Z",
+  "experimentUrl": "https://cloud.langfuse.com/project/cmvtk593u07syad0eafghehnj/experiments/results?baseline=6a4992656916c7db",
+  "model": "claude-opus-5-5",
+  "promptSources": [
+    "brief-expansion@langfuse:2"
+  ],
+  "itemCount": 10,
+  "failedItems": [],
+  "scores": {
+    "questions_non_leading": {
+      "mean": 0.9652777777777779,
+      "n": 10
+    },
+    "questions_distinct": {
+      "mean": 0.9888888888888889,
+      "n": 10
+    },
+    "topic_coverage": {
+      "mean": 0.975,
+      "n": 10
+    }
+  },
+  "latencySeconds": 10.0650819765,
+  "inputTokens": 1100,
+  "outputTokens": 845.2,
+  "items": [
+    {
+      "id": "b01-formula",
+      "scores": {
+        "questions_non_leading": 1,
+        "questions_distinct": 1,
+        "topic_coverage": 1
+      },
+      "comments": {
+        "questions_non_leading": "No leading questions.",
+        "questions_distinct": "No duplicates.",
+        "topic_coverage": "Every topic covered."
+      },
+      "latencySeconds": 12.026982105000004,
+      "inputTokens": 1083,
+      "outputTokens": 724,
+      "output": {
+        "title": "Why UK Mums Switch Infant Formula Brands",
+        "audience": "Mothers in the UK aged 25 to 40 who use or have used infant formula",
+        "topics": [
+          "Current formula use and how the first brand was chosen",
+          "Triggers and reasons for switching formula brands",
+          "The switching decision process and information sources",
+          "Influences such as health professionals, family, friends and online communities",
+          "Price, availability and practical factors",
+          "Baby's response and feelings about switching",
+          "Future intentions and what would make them stay or switch again"
+        ],
+        "questions": [
+          {
+            "text": "To start, could you tell me a bit about your little one and how formula fits into your feeding routine at the moment?",
+            "goal": "Build rapport and understand the respondent's current feeding situation and how central formula is to it."
+          },
+          {
+            "text": "Thinking back to when you first started using formula, how did you end up with the brand you chose?",
+            "goal": "Understand how the initial brand choice was made and what shaped it."
+          },
+          {
+            "text": "Can you walk me through the time or times you've changed formula brands, from when you first started thinking about it to when you made the change?",
+            "goal": "Map the switching journey and identify the triggers that started it."
+          },
+          {
+            "text": "What were the main reasons behind your decision to switch?",
+            "goal": "Uncover the core motivations for switching, in the respondent's own words."
+          },
+          {
+            "text": "Who or what, if anyone, did you turn to for advice or information when deciding which formula to move to?",
+            "goal": "Identify the people, professionals and sources that influence the choice of a new brand."
+          },
+          {
+            "text": "How, if at all, did things like price, offers or being able to find it in the shops play a part in your decision?",
+            "goal": "Understand the role of cost, promotions and availability in switching."
+          },
+          {
+            "text": "How did your baby get on after the switch?",
+            "goal": "Learn how the baby's reaction shaped the respondent's view of whether the switch worked."
+          },
+          {
+            "text": "How did you feel, as a parent, about making the change?",
+            "goal": "Explore the emotions involved in switching, such as confidence, worry or relief, without assuming any particular feeling."
+          },
+          {
+            "text": "Looking ahead, what would make you stick with the formula you use now, and what might lead you to change again?",
+            "goal": "Understand future loyalty drivers and potential triggers for further switching."
+          }
+        ]
+      }
+    },
+    {
+      "id": "b02-packaging",
+      "scores": {
+        "questions_non_leading": 1,
+        "questions_distinct": 1,
+        "topic_coverage": 1
+      },
+      "comments": {
+        "questions_non_leading": "No leading questions.",
+        "questions_distinct": "No duplicates.",
+        "topic_coverage": "Every topic covered."
+      },
+      "latencySeconds": 14.259920035000002,
+      "inputTokens": 1112,
+      "outputTokens": 1380,
+      "output": {
+        "title": "Shopper Reactions to the New Plant-Based Packaging",
+        "audience": "Adults aged 30 to 55 who do a weekly grocery shop",
+        "topics": [
+          "Weekly grocery shopping habits",
+          "Role of packaging in product choice",
+          "Understanding of plant-based packaging",
+          "Reactions to the new plant-based packaging",
+          "Influence of the packaging on likelihood to buy",
+          "Hesitations or concerns about the packaging",
+          "Future expectations for grocery packaging"
+        ],
+        "questions": [
+          {
+            "text": "Could you walk me through how your weekly grocery shop usually goes, from planning it to getting it home?",
+            "goal": "Understand the respondent's shopping routine and context before discussing packaging."
+          },
+          {
+            "text": "When you're standing in front of a few similar products on the shelf, how do you decide which one goes in your basket?",
+            "goal": "Learn which factors drive product choice, unprompted, before packaging is mentioned."
+          },
+          {
+            "text": "What part, if any, does the packaging play when you're choosing what to buy?",
+            "goal": "Gauge how much weight packaging carries in purchase decisions relative to other factors."
+          },
+          {
+            "text": "When you hear the phrase 'plant-based packaging', what comes to mind?",
+            "goal": "Uncover the respondent's understanding, associations and any misconceptions about plant-based packaging."
+          },
+          {
+            "text": "Looking at the new packaging we've shown you, how do you feel about it?",
+            "goal": "Capture honest, unprompted reactions to the new packaging, whether positive, negative or neutral."
+          },
+          {
+            "text": "How, if at all, would this packaging change whether you'd buy the product?",
+            "goal": "Test whether and how the new packaging influences likelihood to buy, without assuming a positive effect."
+          },
+          {
+            "text": "What, if anything, would make you hesitate before buying a product in this packaging?",
+            "goal": "Identify any barriers such as price, durability, trust in claims or appearance."
+          },
+          {
+            "text": "What would you want to know about this packaging before deciding how you feel about it?",
+            "goal": "Find out what information or proof shoppers need to evaluate the packaging and its claims."
+          },
+          {
+            "text": "Looking ahead, how do you see packaging fitting into the way you choose your groceries over the next few years?",
+            "goal": "Understand future expectations and whether packaging is likely to grow or shrink as a factor in choice."
+          }
+        ]
+      }
+    },
+    {
+      "id": "b03-delivery-apps",
+      "scores": {
+        "questions_non_leading": 0.875,
+        "questions_distinct": 1,
+        "topic_coverage": 1
+      },
+      "comments": {
+        "questions_non_leading": "Q7: It presumes the respondent has a usual app and has switched away from it.",
+        "questions_distinct": "No duplicates.",
+        "topic_coverage": "Every topic covered."
+      },
+      "latencySeconds": 7.839110002000001,
+      "inputTokens": 1109,
+      "outputTokens": 669,
+      "output": {
+        "title": "Weeknight Food Delivery App Choice Among People in Their Twenties",
+        "audience": "People in their twenties who order food through delivery apps on weeknights",
+        "topics": [
+          "How the app is chosen on a weeknight",
+          "Price",
+          "Delivery speed",
+          "Choice of restaurants",
+          "Loyalty schemes"
+        ],
+        "questions": [
+          {
+            "text": "Tell me about the last time you ordered food through an app on a weeknight. What was going on, and how did it play out from start to finish?",
+            "goal": "To get a concrete, recent story that sets the scene and shows the natural decision process without prompting."
+          },
+          {
+            "text": "When you decide to order in on a weeknight, how do you pick which app to open first?",
+            "goal": "To understand the habits, defaults and triggers that drive which app gets opened before any specific factor is raised."
+          },
+          {
+            "text": "How, if at all, does the total cost of an order, including fees, affect which app you end up using?",
+            "goal": "To learn how much weight price and fees carry in app choice and how people compare costs across apps."
+          },
+          {
+            "text": "How does the delivery time an app shows you factor into your decision, if it does at all?",
+            "goal": "To understand how important delivery speed is on weeknights and how much people trust the estimated times."
+          },
+          {
+            "text": "How would you describe the range of restaurants on the apps you use, and what role does that play in where you order from?",
+            "goal": "To find out how restaurant choice and availability of specific favourites shape app selection."
+          },
+          {
+            "text": "What experience, if any, have you had with rewards, memberships or points schemes on delivery apps?",
+            "goal": "To learn whether and how loyalty schemes and subscriptions influence which app people return to."
+          },
+          {
+            "text": "Think of a time you switched from your usual app to a different one. What led to that?",
+            "goal": "To uncover the factors strong enough to break habits and how price, speed, choice and rewards trade off in practice."
+          },
+          {
+            "text": "Looking ahead, what would an app need to change or offer for you to use it more often on weeknights?",
+            "goal": "To capture forward-looking needs and unmet expectations that could inform product and marketing decisions."
+          }
+        ]
+      }
+    },
+    {
+      "id": "b04-gym-cancel",
+      "scores": {
+        "questions_non_leading": 1,
+        "questions_distinct": 1,
+        "topic_coverage": 1
+      },
+      "comments": {
+        "questions_non_leading": "No leading questions.",
+        "questions_distinct": "No duplicates.",
+        "topic_coverage": "Every topic covered."
+      },
+      "latencySeconds": 8.726287611000007,
+      "inputTokens": 1092,
+      "outputTokens": 712,
+      "output": {
+        "title": "Why New Gym Members Cancel Within Their First Three Months",
+        "audience": "Gym members aged 18 to 45 who cancelled their membership this year within their first three months",
+        "topics": [
+          "Reasons for joining the gym",
+          "Expectations before joining",
+          "Early experiences at the gym",
+          "How gym visits fit into daily life",
+          "Moments that led to the decision to cancel",
+          "The cancellation process",
+          "What might have changed the outcome",
+          "Future plans for exercise and gyms"
+        ],
+        "questions": [
+          {
+            "text": "To start, could you tell me a bit about how exercise or staying active fits into your life these days?",
+            "goal": "To build rapport and understand the respondent's general relationship with exercise as context for their gym experience."
+          },
+          {
+            "text": "Thinking back to when you signed up, what was going on in your life that made you decide to join a gym?",
+            "goal": "To learn the motivations and life circumstances that triggered joining."
+          },
+          {
+            "text": "Before your first visit, what did you picture your time at the gym would be like?",
+            "goal": "To uncover the expectations members held before joining so they can be compared with reality."
+          },
+          {
+            "text": "Can you walk me through what your first few weeks as a member were actually like?",
+            "goal": "To understand the early on-site experience, including onboarding, facilities, staff and atmosphere."
+          },
+          {
+            "text": "How did going to the gym fit around the rest of your week, such as work, family or other commitments?",
+            "goal": "To learn about practical factors like time, location and routine that affected how often they went."
+          },
+          {
+            "text": "When did you first start thinking about cancelling, and what was happening at that point?",
+            "goal": "To identify the moments, triggers and feelings that led to the decision to cancel."
+          },
+          {
+            "text": "How would you describe the process of actually cancelling your membership?",
+            "goal": "To understand the cancellation experience and any friction or feelings it created."
+          },
+          {
+            "text": "Looking back, what, if anything, could the gym have done differently during those first months?",
+            "goal": "To surface changes the gym could make that might have kept the member, without assuming any would have."
+          },
+          {
+            "text": "How do you see yourself keeping active over the next year, and what role, if any, might a gym play in that?",
+            "goal": "To learn about future exercise plans and openness to rejoining a gym or choosing an alternative."
+          }
+        ]
+      }
+    },
+    {
+      "id": "b05-banking-app",
+      "scores": {
+        "questions_non_leading": 1,
+        "questions_distinct": 1,
+        "topic_coverage": 1
+      },
+      "comments": {
+        "questions_non_leading": "No leading questions.",
+        "questions_distinct": "No duplicates.",
+        "topic_coverage": "Every topic covered."
+      },
+      "latencySeconds": 8.760628030000007,
+      "inputTokens": 1081,
+      "outputTokens": 759,
+      "output": {
+        "title": "First Steps with a Banking App: Retirees' Experiences",
+        "audience": "Retired people who have started, or tried to start, using a banking app on a smartphone for the first time",
+        "topics": [
+          "How they managed their banking before the app",
+          "What led them to try a banking app",
+          "Setting up and first-time use",
+          "Help and support they used",
+          "Feelings about security and trust",
+          "Ongoing use and habits",
+          "Hopes for the future"
+        ],
+        "questions": [
+          {
+            "text": "To start, could you tell me a bit about how you have usually looked after your banking over the years?",
+            "goal": "Understand their banking habits and routines before using an app, as context for the change."
+          },
+          {
+            "text": "How did you first come to start using a banking app on your phone?",
+            "goal": "Learn what triggered the decision to try a banking app and who or what influenced it."
+          },
+          {
+            "text": "Can you walk me through what happened the first time you tried to set up the app, step by step, as best you remember it?",
+            "goal": "Capture the real setup journey, including downloading, registering and logging in for the first time."
+          },
+          {
+            "text": "Which parts of getting started, if any, took more time or effort than you expected, and what happened then?",
+            "goal": "Identify specific barriers and friction points in first-time use without assuming difficulty."
+          },
+          {
+            "text": "Who or what, if anyone, did you turn to for help while getting started, and how did that go?",
+            "goal": "Understand the role of family, friends, bank staff, guides or other support in getting started."
+          },
+          {
+            "text": "How do you feel about keeping your money and personal details safe when you use the app?",
+            "goal": "Explore attitudes to security and trust and how these shape their willingness to use the app."
+          },
+          {
+            "text": "Thinking about the weeks after you first set it up, how has the way you use the app changed, if at all?",
+            "goal": "Learn how use develops over time, which features become habits and which are avoided."
+          },
+          {
+            "text": "How does using the app compare with the other ways you have done your banking?",
+            "goal": "Understand how they weigh the app against branches, phone banking or other methods."
+          },
+          {
+            "text": "If you could give advice to another retired person about to try a banking app for the first time, what would you tell them?",
+            "goal": "Surface the lessons and practical tips they consider most important from their own experience."
+          },
+          {
+            "text": "Looking ahead, what would make banking on your phone work better for you in the future?",
+            "goal": "Gather forward-looking needs and ideas for improving the first-time and ongoing experience."
+          }
+        ]
+      }
+    },
+    {
+      "id": "b06-refills",
+      "scores": {
+        "questions_non_leading": 1,
+        "questions_distinct": 1,
+        "topic_coverage": 1
+      },
+      "comments": {
+        "questions_non_leading": "No leading questions.",
+        "questions_distinct": "No duplicates.",
+        "topic_coverage": "Every topic covered."
+      },
+      "latencySeconds": 8.433420345000005,
+      "inputTokens": 1124,
+      "outputTokens": 739,
+      "output": {
+        "title": "Refillable Cleaning Product Subscription: Renter Reactions",
+        "audience": "City renters aged 25 to 40",
+        "topics": [
+          "Current cleaning product habits",
+          "Appeal of refills",
+          "Worries about subscriptions",
+          "Expected price",
+          "Storage space"
+        ],
+        "questions": [
+          {
+            "text": "To start, could you walk me through how you usually get your household cleaning products, from noticing you're running low to having something new under the sink?",
+            "goal": "Understand current buying habits, including where, how often and how respondents shop for cleaning products."
+          },
+          {
+            "text": "How do you decide which cleaning products or brands to buy?",
+            "goal": "Learn what drives current product and brand choices, such as price, scent, effectiveness or values."
+          },
+          {
+            "text": "Imagine a service where you keep reusable bottles at home and get refills of cleaning products delivered. What are your first thoughts about that idea?",
+            "goal": "Capture unprompted initial reactions to the refill concept, both positive and negative."
+          },
+          {
+            "text": "How, if at all, would switching to refills change the way you clean or shop compared with what you do now?",
+            "goal": "Explore the perceived appeal and drawbacks of refills relative to current habits."
+          },
+          {
+            "text": "Thinking about subscriptions you have now or have had in the past, how have those experiences shaped how you feel about signing up for a new one?",
+            "goal": "Uncover past subscription experiences that influence openness or resistance to subscribing."
+          },
+          {
+            "text": "What, if anything, would make you hesitate before signing up for a cleaning product subscription like this?",
+            "goal": "Identify specific worries about subscriptions, such as commitment, cancellation, delivery timing or unwanted products."
+          },
+          {
+            "text": "How do you think about what a service like this should cost each month, and what would you compare it to?",
+            "goal": "Understand price expectations and the reference points respondents use to judge value."
+          },
+          {
+            "text": "Tell me about where you keep cleaning supplies in your place right now and how that space works for you.",
+            "goal": "Learn about real storage constraints in rented city homes and how refill bottles and deliveries might fit."
+          },
+          {
+            "text": "Looking ahead, what would a refill subscription need to look like for it to fit into your life over the next year or so?",
+            "goal": "Gather forward-looking requirements and conditions under which respondents might adopt the service."
+          }
+        ]
+      }
+    },
+    {
+      "id": "b07-short-trips",
+      "scores": {
+        "questions_non_leading": 1,
+        "questions_distinct": 1,
+        "topic_coverage": 1
+      },
+      "comments": {
+        "questions_non_leading": "No leading questions.",
+        "questions_distinct": "No duplicates.",
+        "topic_coverage": "Every topic covered."
+      },
+      "latencySeconds": 9.527384454999993,
+      "inputTokens": 1087,
+      "outputTokens": 778,
+      "output": {
+        "title": "Short Commutes: Choosing Between E-Scooter, Bus and Walking",
+        "audience": "Commuters who regularly make trips under 3 km and who use, or could use, an e-scooter, the bus or walking for those trips",
+        "topics": [
+          "Current short-trip habits and routines",
+          "How the choice between e-scooter, bus and walking is made",
+          "Practical factors such as time, cost, weather and distance",
+          "Perceptions of safety and comfort for each option",
+          "Barriers or hesitations around each option",
+          "Situations that change which option is used",
+          "Future intentions and what would change their choice"
+        ],
+        "questions": [
+          {
+            "text": "Can you walk me through a typical short trip you make, under about 3 km, from the moment you decide to leave until you arrive?",
+            "goal": "To understand the respondent's real short-trip routine and context in their own words."
+          },
+          {
+            "text": "When you have a short trip like that, how do you usually get there, and how did that become your usual way?",
+            "goal": "To learn their default mode and the history or habits behind it."
+          },
+          {
+            "text": "Think about the last time you had to decide how to get somewhere close by. What went through your mind as you chose how to travel?",
+            "goal": "To uncover the actual decision process and which factors come to mind first."
+          },
+          {
+            "text": "How would you describe the experience of getting around by e-scooter, by bus and on foot, based on what you've done or seen yourself?",
+            "goal": "To capture unprompted perceptions of each of the three options side by side."
+          },
+          {
+            "text": "How, if at all, do things like weather, time of day or what you're carrying affect how you travel on short trips?",
+            "goal": "To identify situational factors that shift their choice from one option to another."
+          },
+          {
+            "text": "How do you feel about safety and comfort when you think about each of these three ways of travelling?",
+            "goal": "To explore safety and comfort perceptions without assuming any option feels better or worse."
+          },
+          {
+            "text": "What, if anything, makes you hesitate before using any of these options for a short trip?",
+            "goal": "To surface barriers such as cost, reliability, effort, access or rules for each option."
+          },
+          {
+            "text": "Can you tell me about a time you travelled a short distance in a different way than you normally would? What led to that?",
+            "goal": "To find the triggers that cause people to switch modes in practice."
+          },
+          {
+            "text": "Looking ahead, what would need to be different for you to change how you make your short trips?",
+            "goal": "To learn what changes in services, infrastructure or personal circumstances would shift future behaviour."
+          }
+        ]
+      }
+    },
+    {
+      "id": "b08-coffee-pods",
+      "scores": {
+        "questions_non_leading": 1,
+        "questions_distinct": 0.8888888888888888,
+        "topic_coverage": 0.75
+      },
+      "comments": {
+        "questions_non_leading": "No leading questions.",
+        "questions_distinct": "Q4 and Q5: Telling the story of how they stopped would naturally cover the same reasons asked for in the later question.",
+        "topic_coverage": "Missed: why they started using pods."
+      },
+      "latencySeconds": 9.712652131999988,
+      "inputTokens": 1087,
+      "outputTokens": 692,
+      "output": {
+        "title": "Why Coffee Drinkers Stopped Buying Pods",
+        "audience": "Coffee drinkers who used to buy coffee pods but have stopped buying them",
+        "topics": [
+          "Past experience with coffee pods",
+          "Reasons for stopping buying pods",
+          "The moment or trigger for the switch",
+          "What they use to make coffee now",
+          "How the current method compares with pods",
+          "What could bring them back to pods"
+        ],
+        "questions": [
+          {
+            "text": "To start, could you tell me about your coffee habits on a typical day, from your first cup onwards?",
+            "goal": "Understand the respondent's current coffee routine and how central coffee is to their day."
+          },
+          {
+            "text": "Thinking back to when you used coffee pods, how did they fit into your life back then?",
+            "goal": "Learn how and when pods were used, for how long, and what role they played in the routine."
+          },
+          {
+            "text": "How would you describe your overall experience with coffee pods during the time you used them?",
+            "goal": "Capture the respondent's unprompted feelings about pods, both positive and negative, without suggesting either."
+          },
+          {
+            "text": "Can you walk me through how you came to stop buying pods?",
+            "goal": "Uncover the sequence of events and any specific trigger or turning point that led to stopping."
+          },
+          {
+            "text": "What were the main reasons behind your decision to stop buying pods?",
+            "goal": "Identify the underlying drivers of stopping, such as cost, taste, waste, convenience or machine issues, in the respondent's own words."
+          },
+          {
+            "text": "How do you make or get your coffee now that you no longer use pods?",
+            "goal": "Find out which method, equipment, products or outlets have replaced pods."
+          },
+          {
+            "text": "How did you go about choosing what you use now instead of pods?",
+            "goal": "Understand what options were considered and what influenced the choice of replacement."
+          },
+          {
+            "text": "How does your current way of having coffee compare with using pods?",
+            "goal": "Learn what is better, worse or the same about the replacement relative to pods, as the respondent sees it."
+          },
+          {
+            "text": "Looking ahead, what, if anything, would make you consider buying coffee pods again?",
+            "goal": "Identify the conditions or changes, if any, that could win the respondent back to pods."
+          }
+        ]
+      }
+    },
+    {
+      "id": "b09-fresh-dog-food",
+      "scores": {
+        "questions_non_leading": 1,
+        "questions_distinct": 1,
+        "topic_coverage": 1
+      },
+      "comments": {
+        "questions_non_leading": "No leading questions.",
+        "questions_distinct": "No duplicates.",
+        "topic_coverage": "Every topic covered."
+      },
+      "latencySeconds": 12.28254179599999,
+      "inputTokens": 1126,
+      "outputTokens": 1242,
+      "output": {
+        "title": "Dog Owners' Views on Switching to Home-Delivered Fresh Dog Food",
+        "audience": "Dog owners who decide what their dog eats, whatever they feed today, and who could switch to a home-delivered fresh dog food.",
+        "topics": [
+          "Current feeding habits and how the food was chosen",
+          "Views on fresh dog food",
+          "Feelings about switching to a home-delivered fresh dog food",
+          "Cost and value",
+          "Trust in the ingredients",
+          "The vet's opinion and influence"
+        ],
+        "questions": [
+          {
+            "text": "To start, tell me a bit about your dog and what a normal mealtime looks like for them.",
+            "goal": "Build rapport and understand the dog and the household's current feeding routine."
+          },
+          {
+            "text": "How did you end up choosing the food your dog eats now?",
+            "goal": "Learn what drives current food choices and who or what shaped them."
+          },
+          {
+            "text": "When you hear the words \"fresh dog food\", what comes to mind?",
+            "goal": "Uncover unprompted views of fresh dog food without assuming it is preferred."
+          },
+          {
+            "text": "How would you feel about having your dog's food delivered to your door on a regular schedule?",
+            "goal": "Understand reactions to the home-delivery and subscription side of the offer, including practical pros and cons."
+          },
+          {
+            "text": "How do you decide whether a dog food is worth what it costs?",
+            "goal": "Learn how owners judge cost and value, and what price-related trade-offs they make."
+          },
+          {
+            "text": "What would you want to know about the ingredients in a dog food before you felt comfortable giving it to your dog?",
+            "goal": "Find out what builds or undermines trust in ingredients and what proof owners look for."
+          },
+          {
+            "text": "What part, if any, does your vet play when you make decisions about your dog's food?",
+            "goal": "Gauge how much the vet's opinion influences food choices and how owners would involve the vet in a switch."
+          },
+          {
+            "text": "What, if anything, would make you hesitate before switching your dog to a new food?",
+            "goal": "Identify barriers to switching, such as the dog's reaction, routine, cost or doubts, in the owner's own words."
+          },
+          {
+            "text": "Thinking about the year ahead, how do you see the way you feed your dog changing, if at all?",
+            "goal": "Understand future intentions and openness to changing how they feed their dog."
+          }
+        ]
+      }
+    },
+    {
+      "id": "b10-budgeting",
+      "scores": {
+        "questions_non_leading": 0.7777777777777778,
+        "questions_distinct": 1,
+        "topic_coverage": 1
+      },
+      "comments": {
+        "questions_non_leading": "Q4: It presumes the respondent has tried a budgeting app, even though question 3 allowed that they may not have. Q8: It assumes that other people's habits affect how the respondent tracks money.",
+        "questions_distinct": "No duplicates.",
+        "topic_coverage": "Every topic covered."
+      },
+      "latencySeconds": 9.081893254000024,
+      "inputTokens": 1099,
+      "outputTokens": 757,
+      "output": {
+        "title": "Young Adults, Spending and Budgeting Apps",
+        "audience": "Young adults aged 18 to 25",
+        "topics": [
+          "How they keep track of their spending day to day",
+          "Tools and methods they use to track money",
+          "Experiences with budgeting apps",
+          "What makes them stop using budgeting apps",
+          "What would help them keep track of money in future"
+        ],
+        "questions": [
+          {
+            "text": "To start off, tell me a bit about how money fits into your life right now, like where it comes from and what it usually goes on.",
+            "goal": "Understand the respondent's financial context, income sources and main spending areas as a warm-up."
+          },
+          {
+            "text": "Walk me through how you keep an eye on what you spend in a typical week, if you do at all.",
+            "goal": "Learn their everyday habits and routines for tracking spending, including not tracking at all."
+          },
+          {
+            "text": "What tools or methods, if any, have you used to keep track of your money, whether that's an app, a spreadsheet, notes, your banking app or something else?",
+            "goal": "Map the full range of tracking tools and methods they have tried, beyond dedicated budgeting apps."
+          },
+          {
+            "text": "Think back to the first time you tried a budgeting app. What was going on in your life that made you try it?",
+            "goal": "Identify the triggers and motivations that lead young adults to start using a budgeting app."
+          },
+          {
+            "text": "How would you describe your experience of using that app in the first few weeks?",
+            "goal": "Capture their unprompted early experience with a budgeting app, including any positives and frustrations."
+          },
+          {
+            "text": "If you stopped using a budgeting app, tell me about what was happening around the time you stopped.",
+            "goal": "Uncover the specific moments, reasons and circumstances that lead them to give up on budgeting apps."
+          },
+          {
+            "text": "How do you feel when you look closely at what you've been spending?",
+            "goal": "Explore the emotions tied to tracking spending and how those feelings may affect sticking with it."
+          },
+          {
+            "text": "How do the people around you, like friends, family or partners, handle keeping track of their money, and how does that affect the way you do it?",
+            "goal": "Understand social influences on their tracking habits and attitudes toward budgeting."
+          },
+          {
+            "text": "Looking ahead, what would need to be true for a way of tracking your money to become something you actually keep doing?",
+            "goal": "Identify the conditions, features or changes that would help them stick with tracking their spending in future."
+          }
+        ]
+      }
+    }
+  ]
+}

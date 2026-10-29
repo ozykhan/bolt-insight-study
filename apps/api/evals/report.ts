@@ -31,7 +31,7 @@ export function renderReport(suites: ReportSuite[], records: RunRecord[]): strin
     const sources = runs.map((r) => `${r.variant}: ${r.promptSources.join(', ')}`).join('; ');
     const dates = [...new Set(runs.map((r) => r.ranAt.slice(0, 10)))].join(', ');
     const lines = [
-      `**${suite.title}**: ${runs[0]!.itemCount} items, run on ${dates} with ${runs[0]!.model} (${sources}).`,
+      `**${suite.title}**: ${runs[0]!.itemCount} items, run on ${dates} (${sources}).`,
       '',
       '| Score | Items | v1 | v2 | Change |',
       '| --- | ---: | ---: | ---: | ---: |',

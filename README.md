@@ -10,7 +10,7 @@ I built it in three days as a study project, to learn NestJS, LangChain, LangGra
 | --- | --- | --- |
 | 1 | Scaffold, brief to questionnaire, questionnaire editor, launch, Langfuse tracing | Done |
 | 2 | AI moderator (LangGraph) over Socket.io, respondent chat, PostHog funnel and flag | Done |
-| 3 | Insights summary, eval datasets with before and after numbers, write-up | Done; evals run with real keys (results below), funnel screenshot to come |
+| 3 | Insights summary, eval datasets with before and after numbers, write-up | Done; evals run with real keys and a full funnel in PostHog (both below) |
 
 ## What works today
 
@@ -282,7 +282,11 @@ So the next prompt change should target assumed experiences, and the moderator d
 
 ## Product analytics
 
-All seven funnel events and the flag are in place (see [PostHog](#posthog-optional) above). I ran one study end to end with a real PostHog project, driving the browser with Playwright through every step: brief, generated questionnaire, an edit, launch, an eleven-answer interview and the summary. The funnel screenshot goes here once it is captured from PostHog.
+All seven funnel events and the flag are in place (see [PostHog](#posthog-optional) above). I ran one study end to end with a real PostHog project, driving the browser with Playwright through every step: brief, generated questionnaire, an edit, launch, a ten-answer interview and the summary.
+
+![PostHog funnel: one person through all seven steps, from brief_submitted to summary_viewed](docs/posthog-funnel.png)
+
+One person goes through all seven steps in under two minutes, with browser and server events on the same person. It is a single scripted run, so it shows the events and the identity wiring work, not how real users behave.
 
 ## What I'd do next
 

@@ -82,6 +82,7 @@ Because every piece is a Runnable, a callback handler passed at `invoke` time (L
 - Because it is OpenTelemetry underneath, versions matter. The newest OpenTelemetry SDK was outside the range the Langfuse packages accept, so the OpenTelemetry packages are pinned to the last matching release.
 - Spans are sent in batches. A short-lived script has to flush before it exits, and the API flushes on shutdown (`enableShutdownHooks` plus `onApplicationShutdown`).
 - The instrumentation file runs before Nest's `ConfigModule`, so it cannot rely on Nest to load `.env`. A tiny `load-env.ts` uses Node's built-in `process.loadEnvFile` first.
+- The `langfusePrompt` link only works when the model call is a direct sibling of the prompt in the chain. The callback handler remembers the prompt against the prompt step's parent run and looks it up from the generation's parent run. `withStructuredOutput` wraps the model in its own sequence, so the generation's parent is that wrapper and the lookup misses. The first real run showed it: follow-ups and bridges are linked to their prompt versions in Langfuse, while brief expansion, decide and the summary are not. The prompt version still reaches every trace as a tag.
 
 **Next time.** Agree on trace naming (run names, session ids, tags) before the first trace. Filtering in the UI depends on those names, and renaming later splits the history.
 
@@ -94,7 +95,7 @@ Because every piece is a Runnable, a callback handler passed at `invoke` time (L
 - The test cases live in the repo (`evals/*.dataset.ts`). The runner creates the dataset if it is missing and upserts every item with `langfuse.dataset.createItem({ datasetName, id, input, expectedOutput })`. Upserting by a stable id keeps the repo as the source of truth and Langfuse as the history of runs.
 - `langfuse.experiment.run({ name, runName, data, task, evaluators, maxConcurrency })` does the loop. Each item runs inside its own OpenTelemetry span, so the LangChain callback handler created inside the task nests every chain step and model call under that item's trace with no extra wiring.
 - An evaluator is a plain async function that gets `{ input, output, expectedOutput, metadata }` and returns scores (`{ name, value, comment }`). The judges are LangChain chains with structured output, and the evaluators turn their verdicts into 0 to 1 scores in code, so the scoring rule (for example, "count the later question of a duplicate pair") is testable without a model.
-- The suites are tested end to end against a fake Anthropic client, and I ran the real runner once against a fake Claude API and a fake Langfuse server to check the wiring before anyone spends money on it.
+- The suites are tested end to end against a fake Anthropic client, and I ran the real runner once against a fake Claude API and a fake Langfuse server to check the wiring before anyone spends money on it. The first real run then needed no code changes: `pnpm evals brief-expansion --limit 2` as a cheap check, then the full run.
 
 **Surprises.**
 
@@ -103,7 +104,7 @@ Because every piece is a Runnable, a callback handler passed at `invoke` time (L
 - Dataset item ids are unique across the whole Langfuse project, not per dataset, so they are prefixed with the suite name.
 - Asking Langfuse for a prompt label that does not exist yet (a `v2` that was never pushed) still works, because the repo copy is the fallback, but the SDK logs a full error with a stack trace for each one. Running `pnpm prompts:push` first keeps the output clean and links each generation to its prompt version.
 - LangChain runs callback handlers in the background by default. The small handler that counts tokens per item is created with `_awaitHandler: true`, so its counts are final when the task returns.
-- The decide prompt is the same in v1 and v2, which turns its score into a free check on run-to-run noise. Without that I would not know whether a 5 point change in the other scores means anything.
+- The decide prompt is the same in v1 and v2, which was meant to be a free check on run-to-run noise. In the real run it scored 100% both times, so it measured nothing. Running brief expansion v1 twice did the job instead: the same prompt moved by up to 5 points, more than v2 changed it.
 
 **Next time.** Write the judge prompts and score a handful of outputs by hand before the first run, then compare my labels with the judge's. An LLM judge is a model too, and its numbers are only as good as that agreement.
 
@@ -192,5 +193,6 @@ Because every piece is a Runnable, a callback handler passed at `invoke` time (L
 - posthog-node batches events in the background. The API calls `shutdown()` when Nest shuts down, or the last events would be lost.
 - Vite only exposes environment variables with an allowed prefix to browser code. Rather than rename the variables or open a broad prefix, `envPrefix` lists the two PostHog names. The project key is public by design.
 - posthog-js tips the web bundle over Vite's 500 kB warning. Fine for a demo; a real app would load it lazily.
+- posthog-js drops events from browsers that look automated (`navigator.webdriver`, or "HeadlessChrome" in the user agent) without any warning. My first scripted end to end run sent all five server events and neither browser event, so the funnel had no first step. A Playwright run that should count needs a normal user agent and `webdriver` reported as false.
 
 **Next time.** No test checks the analytics. The e2e tests would pass with every `capture` call deleted. Next time I would give the e2e tests a fake PostHog client and assert the funnel events, in order, for one full run.

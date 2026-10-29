@@ -10,7 +10,7 @@ I built it in three days as a study project, to learn NestJS, LangChain, LangGra
 | --- | --- | --- |
 | 1 | Scaffold, brief to questionnaire, questionnaire editor, launch, Langfuse tracing | Done |
 | 2 | AI moderator (LangGraph) over Socket.io, respondent chat, PostHog funnel and flag | Done |
-| 3 | Insights summary, eval datasets with before and after numbers, write-up | Built; the eval numbers and the funnel screenshot need a run with real keys |
+| 3 | Insights summary, eval datasets with before and after numbers, write-up | Done; evals run with real keys and a full funnel in PostHog (both below) |
 
 ## What works today
 
@@ -23,7 +23,7 @@ I built it in three days as a study project, to learn NestJS, LangChain, LangGra
 
 Two eval suites score the brief expansion and the moderator prompts in Langfuse, so a prompt change comes with before and after numbers (see [Evals](#evals)).
 
-Every Claude call is traced in Langfuse with its prompt version, token usage, latency and cost. With a PostHog key set, every funnel step is captured in PostHog, and a feature flag picks the moderator prompt version per respondent.
+Every Claude call is traced in Langfuse with its token usage, latency and cost, and each trace is tagged with the prompt versions it used. With a PostHog key set, every funnel step is captured in PostHog, and a feature flag picks the moderator prompt version per respondent.
 
 ## Architecture
 
@@ -246,14 +246,47 @@ The judges' prompts are part of the measuring stick, so they stay the same betwe
 ### Results
 
 <!-- eval-results:start -->
-Not run yet. I built and tested the eval harness without API keys, against a fake Claude API and a fake Langfuse server, so these numbers appear after the first run with real keys.
+**Brief expansion**: 10 items, run on 2026-10-29 (v1: brief-expansion@langfuse:1; v2: brief-expansion@langfuse:2).
+
+| Score | Items | v1 | v2 | Change |
+| --- | ---: | ---: | ---: | ---: |
+| Questions not leading | 10 | 94% | 97% | +3 pts |
+| Questions not duplicated | 10 | 99% | 99% | 0 |
+| Brief topics covered | 10 | 98% | 98% | 0 |
+| Seconds per item | 10 | 11.9 | 10.1 | -1.8 |
+| Output tokens per item | 10 | 896 | 845 | -51 |
+
+**Moderator**: 12 items, run on 2026-10-29 (v1: moderator-decide@langfuse:1, moderator-follow-up@langfuse:1; v2: moderator-decide@langfuse:2, moderator-follow-up@langfuse:2).
+
+| Score | Items | v1 | v2 | Change |
+| --- | ---: | ---: | ---: | ---: |
+| Follow-ups grounded in the answer | 7 | 100% | 100% | 0 |
+| Follow-ups not leading | 7 | 100% | 100% | 0 |
+| Follow-ups a single short question | 7 | 100% | 100% | 0 |
+| Decision matches the label | 12 | 100% | 100% | 0 |
+| Seconds per item | 12 | 1.9 | 2.3 | +0.4 |
+| Output tokens per item | 12 | 98 | 98 | 0 |
 <!-- eval-results:end -->
 
-With ten and twelve cases, one run each, and an LLM judge, a change of a few points is within noise. A real decision would want several runs per variant and a check of the judge against hand labels.
+### What the numbers say
+
+I ran brief expansion v1 a second time, with nothing changed, to see how far the scores move on their own. That repeat scored 91% on questions not leading (against 94% and 97% above), 100% on not duplicated and 93% on topics covered ([experiment](https://cloud.langfuse.com/project/cmvtk593u07syad0eafghehnj/experiments/results?baseline=e086d7ed5534d67c)).
+
+- **Brief expansion v2 did not clearly help.** It scored 3 points higher on questions not leading, but the same v1 prompt moved by up to 5 points between two runs. On ten briefs, one run each, v1 and v2 cannot be told apart.
+- **The judge found a different weakness from the one v2 targets.** v2 adds examples of questions that suggest an answer ("What do you like about the new design?"). Every question the judge flagged, in all three runs, instead assumed something the respondent may not have done or felt, such as asking how their use of a budgeting app changed when they may never have used one. The budgeting brief was the weakest in all three runs (56% to 78% not leading), while the two briefs written to tempt leading questions were flagged only once between them.
+- **One coverage miss repeats.** All three runs of the coffee pod brief skipped why people started using pods, and went straight to why they stopped.
+- **The moderator suite is too easy.** Both variants scored 100% on every score, so it cannot show whether the v2 follow-up rule helps, and the decide prompt, identical in v1 and v2, gives no reading of noise either.
+- **Cost.** A full run (both suites, v1 and v2, judges included) cost under $2 by Langfuse's cost tracking, and brief expansion took 10 to 12 seconds per brief.
+
+So the next prompt change should target assumed experiences, and the moderator dataset needs harder cases before it can measure anything; both are in "What I'd do next". A real decision would also want three or more runs per variant and a check of the judge against hand labels.
 
 ## Product analytics
 
-All seven funnel events and the flag are in place (see [PostHog](#posthog-optional) above). The funnel screenshot goes here once a few studies have been run end to end with a real PostHog project; I have not been able to capture one without keys.
+All seven funnel events and the flag are in place (see [PostHog](#posthog-optional) above). I ran one study end to end with a real PostHog project, driving the browser with Playwright through every step: brief, generated questionnaire, an edit, launch, a ten-answer interview and the summary.
+
+![PostHog funnel: one person through all seven steps, from brief_submitted to summary_viewed](docs/posthog-funnel.png)
+
+One person goes through all seven steps in under two minutes, with browser and server events on the same person. It is a single scripted run, so it shows the events and the identity wiring work, not how real users behave.
 
 ## What I'd do next
 
@@ -267,6 +300,8 @@ All seven funnel events and the flag are in place (see [PostHog](#posthog-option
 - The summary prompt holds every answer in the study. That is fine for a handful of interviews; for hundreds, summarise each question first and then combine, or cluster the answers before Claude sees them.
 - The summary itself has no eval yet. Each saved summary already records how many quotes failed the check and why, so a small dataset of transcripts would turn that into a score.
 - The evals run once per variant. Three runs each, with the spread reported, and a judge checked against my own labels on a sample would make small differences trustworthy.
+- The first real run says what to change next: a brief expansion v3 that forbids questions assuming an experience the respondent may not have had (ask whether before asking how), and harder moderator cases, where follow up versus move on is a judgement call, so that suite stops scoring 100%.
+- Langfuse links a generation to its prompt version only when the model call sits right next to the prompt in the chain. `withStructuredOutput` wraps the model in its own small chain, so brief expansion, the moderator's decide step and the summary are not linked (follow-ups and bridges are). Their traces still carry the prompt version as a tag. Fixing it means building the structured output step without that wrapper, or linking the prompt on the generation directly.
 - Prompt changes could run the evals in CI on a small subset, behind a label, since every run costs money.
 
 ## Notes

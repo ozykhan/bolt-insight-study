@@ -17,7 +17,8 @@ What each new tool does, how the idiomatic way differs from doing it by hand, wh
 
 - Nest 12 is ESM first. The package is `"type": "module"`, and imports in TypeScript source end in `.js`.
 - `ConfigModule.forRoot({ validate })` runs when `AppModule` is imported, not when the app starts. Setting `MONGODB_URI` in a test's `beforeAll` was too late, so the e2e database name lives in the Vitest config's `env` instead.
-- `@Global()` modules save importing the LLM module into every feature module, but they hide the dependency. Used once here, for infrastructure only.
+- `@Global()` modules save importing the LLM module into every feature module, but they hide the dependency. Used for infrastructure only (LLM and analytics).
+- Nest's dependency injection reads constructor parameter types from decorator metadata, and that metadata is real JavaScript. A parameter typed `Connection` from `import { Connection } from 'mongoose'` made the compiled output import `Connection` as a value, and Node's ESM loader cannot find named exports in Mongoose's CommonJS build. Typecheck and tests passed, and `node dist/main.js` crashed at boot. `import { type Connection }` fixes it (the `@InjectConnection()` token does the injecting), and CI now boots the built API so this kind of bug fails the build.
 
 **Next time.** Drafting a questionnaire holds an HTTP request open for up to a minute. Make it a background job from the start (Nest has `@nestjs/bullmq`) and push the result over the socket that Day 2 adds anyway.
 
@@ -60,7 +61,7 @@ Because every piece is a Runnable, a callback handler passed at `invoke` time (L
 
 **What it does.** The LLM behind brief expansion, and later the moderator and the summary. It is called through `@langchain/anthropic`.
 
-**Idiomatic vs by hand.** The model id comes from config, not code, and a small `ChatModelFactory` builds a model per call so each call site picks its own settings. The configured model always uses extended thinking, so the only dial is `effort` (`low`, `medium`, `high`), passed as `outputConfig: { effort }`. Brief expansion uses `medium`.
+**Idiomatic vs by hand.** The model id comes from config, not code, and a small `ChatModelFactory` builds a model per call so each call site picks its own settings. The configured model always uses extended thinking, so the only dial is `effort` (`low`, `medium`, `high`), passed as `outputConfig: { effort }`. Brief expansion uses `medium`. The moderator uses `low` for every call, because a respondent is waiting on each one.
 
 **Surprises.** Thinking tokens count toward `maxTokens`, so the limit is set well above the size of the visible answer (16,000).
 
@@ -97,12 +98,67 @@ Because every piece is a Runnable, a callback handler passed at `invoke` time (L
 
 ## LangGraph
 
-Day 2.
+**What it does.** Runs an LLM workflow as a graph. Nodes are functions that read the state and return an update, edges (fixed or conditional) decide what runs next, and a checkpointer saves the state after every step so a run can pause, survive a restart and resume. The moderator is one graph per interview, with the interview id as the `thread_id`.
+
+**Idiomatic vs by hand.** By hand this is a state machine in a service: a `step` field on the interview, a `switch` on it for every message, and code to rebuild where you were after a restart. In LangGraph:
+
+- The flow is declared once with `addNode`, `addEdge` and `addConditionalEdges`. The router after `decide` is a plain function (`routeAfterDecide`), so the follow-up cap is a unit test, not a hope about the prompt.
+- The state is declared with `new StateSchema({ ... })` and zod fields. By default a node's return value replaces a field; wrapping the turns in `new ReducedValue(schema, { reducer: (current, next) => [...current, ...next] })` makes them append instead.
+- Waiting for the respondent is one line in a node: `interrupt<AwaitingAnswer, AnswerResume>({ questionKey, followUpIndex })`. The graph saves a checkpoint and stops. The next answer resumes it with `graph.stream(new Command({ resume: { messageId, text } }), config)`, and `interrupt()` returns that value inside the node.
+- `graph.getState(config)` tells the service what the graph is waiting for (`tasks[].interrupts`) and whether it has finished (`next` is empty), so the service never keeps its own copy of where the conversation is.
+
+**Surprises.**
+
+- When a graph resumes, the interrupted node runs again from the top, and `interrupt()` returns the resume value the second time. Anything written before the `interrupt()` call runs twice. The `awaitAnswer` node therefore does nothing but interrupt, and saving messages happens outside the graph.
+- `streamMode: ['messages', 'updates']` gives `[mode, chunk]` pairs: token chunks from every model call, and each node's state update when it finishes. "Every model call" includes `decide`, whose structured JSON would have streamed straight into the chat. Each token chunk carries `metadata.langgraph_node`, and only the three speaking nodes are forwarded.
+- A node can call `chain.invoke()` and the tokens still stream. When the graph runs in `messages` mode, LangGraph's callback handler asks the model to stream internally, so nodes do not need their own streaming code.
+- With extended thinking, a message's `content` is a list of blocks that includes the thinking. `message.text` returns only the text blocks, which is what the respondent should see.
+- The MongoDB checkpointer is typed against MongoDB driver 6, and Mongoose 9 brings driver 7. It only uses `db().collection()` methods, which both versions share, so it reuses Mongoose's connection through a cast instead of opening a second pool.
+- Most examples online use the older `Annotation.Root` API. The 1.x `StateSchema` with zod reads better and validates the input, but searching for help mostly finds the old style.
+
+**Next time.** The graph state keeps every turn's text, and the `messages` collection keeps it again. The graph only needs the current question's turns to decide, so next time its state would hold ids and counters and read the text from `messages`. One source of truth, and smaller checkpoints.
 
 ## Socket.io
 
-Day 2.
+**What it does.** Two-way events between browser and server over a WebSocket (with HTTP long polling as a fallback), plus reconnection, acknowledgements, namespaces and rooms.
+
+**Idiomatic vs by hand.** By hand you write `io.of('/interview').on('connection', (socket) => socket.on('interview:answer', async (body, ack) => { ... }))` and call `ack` yourself. In Nest a gateway is a provider like a service:
+
+- `@WebSocketGateway({ namespace: '/interview' })` on the class, `@SubscribeMessage('interview:answer')` on a method, `@MessageBody()` and `@ConnectedSocket()` on its parameters.
+- Whatever the method returns is sent back as the acknowledgement, so the browser can `await socket.emitWithAck('interview:answer', payload)` like an HTTP call.
+- `@WebSocketServer()` gives the namespace for pushing events, and `server.to(interviewId).emit(...)` reaches every tab in the interview's room. `socket.to(room)` reaches everyone in the room except the sender.
+- The event names and payloads are typed once in the shared package (`ClientToServerEvents`, `ServerToClientEvents`), and both the gateway and the React hook use them. A typo in an event name or a wrong payload fails the typecheck on both sides.
+- The interview service does not know about sockets. It talks back through a small `InterviewEmitter` interface that the gateway implements, which keeps the service easy to test.
+
+**Surprises.**
+
+- The type parameters flip between sides: the browser's socket is `Socket<ServerToClientEvents, ClientToServerEvents>` (what it listens to, then what it emits), and the server's is the other way round.
+- An exception thrown in a gateway handler does not turn into an acknowledgement. Nest's WebSocket exception filter emits a separate `exception` event instead, so a browser awaiting `emitWithAck` would wait forever. And only a `WsException` keeps its message: a `NotFoundException` from a shared service arrives as "Internal server error". The handlers here validate with zod's `safeParse`, catch errors, and always return an `Ack` union (`{ ok: true, data }` or `{ ok: false, error }`). The browser also uses `socket.timeout(10_000).emitWithAck(...)` so a lost acknowledgement becomes an error it can show.
+- The answer handler acknowledges as soon as the answer is saved, and the moderator's reply follows as events. Holding the acknowledgement until Claude finished would have run into that 10 second timeout.
+- The Vite dev proxy needs `ws: true` on `/socket.io`, or the WebSocket upgrade is not forwarded.
+- React's StrictMode runs effects twice in development, so every page load opened two sockets that joined at the same moment. The unique index on `{ studyId, respondentId }` lets only one of them create the interview, and the other picks it up.
+
+**Next time.** Deltas are fire and forget. If the socket reconnects in the middle of a reply, the streaming text has a gap until `moderator:done` replaces it with the saved message. Sending the whole reply so far with each event, rather than only the new piece, would remove the gap and costs almost nothing at chat sizes.
 
 ## PostHog
 
-Day 2.
+**What it does.** Product analytics (events, funnels, persons, groups) and feature flags in one tool. posthog-js runs in the browser and posthog-node on the server.
+
+**Idiomatic vs by hand.** By hand you would write events to your own table, build funnels in SQL, and hash user ids into buckets for an A/B test. With PostHog:
+
+- The browser owns the person. posthog-js creates a distinct id, and the web app sends it to the API in a header on REST calls and in the Socket.io handshake. Server events use the same id, so the browser's `brief_submitted` and the server's `study_launched` land on the same person.
+- Steps that change data are captured on the server, where ad blockers cannot drop them and the event fires only if the change really happened.
+- `groups: { study: studyId }` on the server and `$groups` on the browser tag every event with its study, so a funnel can be counted per study as well as per person.
+- The moderator prompt version comes from a multivariate flag: `evaluateFlags(distinctId, { flagKeys: [...] })`, then `flags.getFlag(key)`. It is read once, when the interview is created, and stored on the interview so the prompt cannot change halfway through a conversation. The interview events carry `$feature/moderator-prompt-version`, which is the property PostHog uses to break a funnel down by variant.
+
+**Surprises.**
+
+- `getFeatureFlag()` still works in posthog-node 5 but is deprecated. `evaluateFlags()` fetches several flags in one request and returns an object to read them from.
+- Reading a flag sends a `$feature_flag_called` event automatically. That is the exposure event PostHog experiments count, so it is worth reading the flag only where the variant is actually used.
+- Without a personal API key, posthog-node asks PostHog for the flag on each call instead of evaluating it locally. That is fine here, since it happens once per interview.
+- `capture()` can take the flags snapshot (`{ flags }`) and attach the values itself. The interview events set `$feature/moderator-prompt-version` by hand instead, because `interview_completed` fires many requests later and must carry the version stored on the interview, not a fresh evaluation.
+- posthog-node batches events in the background. The API calls `shutdown()` when Nest shuts down, or the last events would be lost.
+- Vite only exposes environment variables with an allowed prefix to browser code. Rather than rename the variables or open a broad prefix, `envPrefix` lists the two PostHog names. The project key is public by design.
+- posthog-js tips the web bundle over Vite's 500 kB warning. Fine for a demo; a real app would load it lazily.
+
+**Next time.** No test checks the analytics. The e2e tests would pass with every `capture` call deleted. Next time I would give the e2e tests a fake PostHog client and assert the funnel events, in order, for one full run.

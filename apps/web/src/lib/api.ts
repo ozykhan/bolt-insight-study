@@ -1,8 +1,10 @@
-import type {
-  QuestionnaireUpdate,
-  StudyDetailDto,
-  StudyDto,
+import {
+  DISTINCT_ID_HEADER,
+  type QuestionnaireUpdate,
+  type StudyDetailDto,
+  type StudyDto,
 } from '@probe-lab/shared';
+import { distinctId } from './analytics';
 
 export class ApiError extends Error {
   constructor(
@@ -16,7 +18,12 @@ export class ApiError extends Error {
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(`/api${path}`, {
     ...init,
-    headers: { 'content-type': 'application/json', ...init.headers },
+    // The API sends its funnel events under the browser's PostHog id.
+    headers: {
+      'content-type': 'application/json',
+      [DISTINCT_ID_HEADER]: distinctId(),
+      ...init.headers,
+    },
   });
   const body = await response.json().catch(() => null);
   if (!response.ok) {

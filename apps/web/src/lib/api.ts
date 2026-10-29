@@ -2,6 +2,7 @@ import {
   DISTINCT_ID_HEADER,
   type QuestionnaireUpdate,
   type StudyDetailDto,
+  type StudyInsightsDto,
   type StudyDto,
 } from '@probe-lab/shared';
 import { distinctId } from './analytics';
@@ -50,4 +51,7 @@ export const api = {
     }),
   launchStudy: (id: string) =>
     request<StudyDetailDto>(`/studies/${id}/launch`, { method: 'POST' }),
+  getInsights: (id: string) => request<StudyInsightsDto>(`/studies/${id}/insights`),
+  generateInsights: (id: string) =>
+    request<StudyInsightsDto>(`/studies/${id}/insights`, { method: 'POST' }),
 };

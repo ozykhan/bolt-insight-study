@@ -7,3 +7,6 @@ coverage/
 !.env.example
 .DS_Store
 *.log
+
+# Eval smoke runs (pnpm evals --limit N)
+*.partial.json

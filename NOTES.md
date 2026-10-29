@@ -20,7 +20,7 @@ What each new tool does, how the idiomatic way differs from doing it by hand, wh
 - `@Global()` modules save importing the LLM module into every feature module, but they hide the dependency. Used for infrastructure only (LLM and analytics).
 - Nest's dependency injection reads constructor parameter types from decorator metadata, and that metadata is real JavaScript. A parameter typed `Connection` from `import { Connection } from 'mongoose'` made the compiled output import `Connection` as a value, and Node's ESM loader cannot find named exports in Mongoose's CommonJS build. Typecheck and tests passed, and `node dist/main.js` crashed at boot. `import { type Connection }` fixes it (the `@InjectConnection()` token does the injecting), and CI now boots the built API so this kind of bug fails the build.
 
-**Next time.** Drafting a questionnaire holds an HTTP request open for up to a minute. Make it a background job from the start (Nest has `@nestjs/bullmq`) and push the result over the socket that Day 2 adds anyway.
+**Next time.** Drafting a questionnaire holds an HTTP request open for up to a minute. Make it a background job from the start (Nest has `@nestjs/bullmq`) and push the result over the Socket.io connection the app already has.
 
 ## MongoDB with Mongoose
 
@@ -65,17 +65,17 @@ Because every piece is a Runnable, a callback handler passed at `invoke` time (L
 
 **Surprises.** Thinking tokens count toward `maxTokens`, so the limit is set well above the size of the visible answer (16,000).
 
-**Next time.** Try `low` effort for brief expansion and let the Day 3 evals decide whether quality drops. It would cut latency and cost.
+**Next time.** Try `low` effort for brief expansion and let the brief expansion eval decide whether quality drops (`pnpm evals brief-expansion`). It would cut latency and cost.
 
 ## Langfuse
 
-**What it does.** Observability for LLM apps: one trace per request with a span for each chain step and model call, plus token usage, latency and cost. It also does prompt management (versioned prompts with labels) and datasets and experiments for evals (Day 3).
+**What it does.** Observability for LLM apps: one trace per request with a span for each chain step and model call, plus token usage, latency and cost. It also does prompt management (versioned prompts with labels) and datasets and experiments for evals (see the next section).
 
 **Idiomatic vs by hand.** By hand you would log the prompt, the response, the tokens and the timing yourself, and keep a price table to work out cost. The current JS SDK is built on OpenTelemetry:
 
 1. `src/instrumentation.ts` registers a `LangfuseSpanProcessor` with the OpenTelemetry Node SDK. `main.ts` imports it first so it is in place before any span is created.
 2. Each call passes `new CallbackHandler({ sessionId, userId, tags })` in `callbacks`. Every Runnable step becomes a span in one trace, and `sessionId` groups all calls for one study (and later one interview).
-3. Prompts come from `langfuse.prompt.get(name, { type: 'chat', label: 'production', fallback })`. `getLangchainPrompt()` converts Langfuse's `{{var}}` into LangChain's `{var}`, and putting the prompt object in the run's metadata as `langfusePrompt` links each generation to its prompt version. That link is what lets Day 3 compare v1 and v2 by prompt version.
+3. Prompts come from `langfuse.prompt.get(name, { type: 'chat', label: 'production', fallback })`. `getLangchainPrompt()` converts Langfuse's `{{var}}` into LangChain's `{var}`, and putting the prompt object in the run's metadata as `langfusePrompt` links each generation to its prompt version. That link is what lets the evals compare v1 and v2 by prompt version.
 
 **Surprises.**
 
@@ -84,6 +84,38 @@ Because every piece is a Runnable, a callback handler passed at `invoke` time (L
 - The instrumentation file runs before Nest's `ConfigModule`, so it cannot rely on Nest to load `.env`. A tiny `load-env.ts` uses Node's built-in `process.loadEnvFile` first.
 
 **Next time.** Agree on trace naming (run names, session ids, tags) before the first trace. Filtering in the UI depends on those names, and renaming later splits the history.
+
+## Langfuse datasets and experiments (evals)
+
+**What it does.** A dataset is a list of test cases (input, expected output, metadata) stored in Langfuse. An experiment runs a task function on every item, runs evaluator functions on each output, and records each item's trace and scores against the dataset, so two runs (prompt v1 and v2) can be compared item by item, with cost and latency next to the scores.
+
+**Idiomatic vs by hand.** By hand you write a loop over a JSON file, call the chain, call a judge, and put the numbers in a spreadsheet. With the JS SDK:
+
+- The test cases live in the repo (`evals/*.dataset.ts`). The runner creates the dataset if it is missing and upserts every item with `langfuse.dataset.createItem({ datasetName, id, input, expectedOutput })`. Upserting by a stable id keeps the repo as the source of truth and Langfuse as the history of runs.
+- `langfuse.experiment.run({ name, runName, data, task, evaluators, maxConcurrency })` does the loop. Each item runs inside its own OpenTelemetry span, so the LangChain callback handler created inside the task nests every chain step and model call under that item's trace with no extra wiring.
+- An evaluator is a plain async function that gets `{ input, output, expectedOutput, metadata }` and returns scores (`{ name, value, comment }`). The judges are LangChain chains with structured output, and the evaluators turn their verdicts into 0 to 1 scores in code, so the scoring rule (for example, "count the later question of a duplicate pair") is testable without a model.
+- The suites are tested end to end against a fake Anthropic client, and I ran the real runner once against a fake Claude API and a fake Langfuse server to check the wiring before anyone spends money on it.
+
+**Surprises.**
+
+- A task that throws does not fail the experiment. The SDK logs the error and skips the item, so a run can look fine with half its items missing. The runner records the ids of skipped items and the report prints them.
+- Evaluators run after the item's span has closed, so judge calls do not land in the item's trace. They get their own callback handler and tag (`eval-judge`), which also keeps the judge's cost apart from the cost of the prompt under test.
+- Dataset item ids are unique across the whole Langfuse project, not per dataset, so they are prefixed with the suite name.
+- Asking Langfuse for a prompt label that does not exist yet (a `v2` that was never pushed) still works, because the repo copy is the fallback, but the SDK logs a full error with a stack trace for each one. Running `pnpm prompts:push` first keeps the output clean and links each generation to its prompt version.
+- LangChain runs callback handlers in the background by default. The small handler that counts tokens per item is created with `_awaitHandler: true`, so its counts are final when the task returns.
+- The decide prompt is the same in v1 and v2, which turns its score into a free check on run-to-run noise. Without that I would not know whether a 5 point change in the other scores means anything.
+
+**Next time.** Write the judge prompts and score a handful of outputs by hand before the first run, then compare my labels with the judge's. An LLM judge is a model too, and its numbers are only as good as that agreement.
+
+## Grounded quotes in the summary
+
+**What it does.** The insights summary must not invent quotes. Claude cites each quote by a short answer reference (`A12`), and code checks the quote against that answer before anything is saved.
+
+**Idiomatic vs by hand.** The usual instinct is to ask the model more firmly ("quote exactly, never paraphrase"). The prompt does say that, but the guarantee comes from code: a quote must be a run of whole words from the cited answer, after folding case, spacing and curly quote marks. The saved quote is cut from the respondent's own text, not copied from the model's output, and it keeps the message id, so the UI can show the full answer behind it.
+
+**Surprises.** Models change quotes in small, predictable ways: wrapping them in quote marks, adding an ellipsis at either end, adding a full stop, straightening an apostrophe. The check tolerates exactly those and rejects everything else, including two fragments joined with "...". Matching on whole words matters too: without it, "rice went up" would match "the price went up".
+
+**Next time.** Track the share of rejected quotes as a score from the start. It is already stored on every summary, and it is the most direct measure of how much the summary can be trusted.
 
 ## pnpm workspaces
 

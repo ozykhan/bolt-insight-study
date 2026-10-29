@@ -4,6 +4,6 @@ export default defineConfig({
   test: {
     globals: true,
     root: './',
-    include: ['src/**/*.spec.ts'],
+    include: ['src/**/*.spec.ts', 'evals/**/*.spec.ts'],
   },
 });

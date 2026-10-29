@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AnalyticsModule } from './analytics/analytics.module.js';
 import { validateEnv, type Env } from './config/env.js';
+import { InsightsModule } from './insights/insights.module.js';
 import { InterviewsModule } from './interviews/interviews.module.js';
 import { LlmModule } from './llm/llm.module.js';
 import { StudiesModule } from './studies/studies.module.js';
@@ -25,6 +26,7 @@ import { StudiesModule } from './studies/studies.module.js';
     AnalyticsModule,
     StudiesModule,
     InterviewsModule,
+    InsightsModule,
   ],
 })
 export class AppModule {}

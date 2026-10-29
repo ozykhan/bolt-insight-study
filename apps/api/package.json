@@ -10,7 +10,9 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
-    "prompts:push": "tsx scripts/push-prompts.ts"
+    "prompts:push": "tsx scripts/push-prompts.ts",
+    "evals": "tsx evals/run.ts",
+    "evals:report": "tsx evals/print-report.ts"
   },
   "dependencies": {
     "@langchain/anthropic": "^1.6.0",

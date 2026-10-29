@@ -12,5 +12,6 @@ import { Study, StudySchema } from './study.schema.js';
   ],
   controllers: [StudiesController],
   providers: [StudiesService],
+  exports: [StudiesService],
 })
 export class StudiesModule {}

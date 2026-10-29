@@ -2,6 +2,7 @@ import { Body, Controller, Get, HttpCode, Param, Post, Put } from '@nestjs/commo
 import { ParseObjectIdPipe } from '@nestjs/mongoose';
 import type { Types } from 'mongoose';
 import {
+  ANALYTICS_EVENTS,
   CreateStudySchema,
   QuestionnaireUpdateSchema,
   type CreateStudyInput,
@@ -9,17 +10,24 @@ import {
   type StudyDetailDto,
   type StudyDto,
 } from '@probe-lab/shared';
+import { AnalyticsService } from '../analytics/analytics.service.js';
+import { DistinctId } from '../analytics/distinct-id.decorator.js';
 import { ZodValidationPipe } from '../common/zod-validation.pipe.js';
 import { StudiesService } from './studies.service.js';
 
 /**
  * Controllers stay thin in Nest: they map HTTP to service calls, and pipes
  * (ParseObjectIdPipe, ZodValidationPipe) turn raw params and bodies into
- * typed, validated values before the handler runs.
+ * typed, validated values before the handler runs. Funnel events are sent
+ * here, after the service succeeds, because only the HTTP layer knows the
+ * browser's distinct id.
  */
 @Controller('studies')
 export class StudiesController {
-  constructor(private readonly studies: StudiesService) {}
+  constructor(
+    private readonly studies: StudiesService,
+    private readonly analytics: AnalyticsService,
+  ) {}
 
   @Get()
   list(): Promise<StudyDto[]> {
@@ -40,21 +48,45 @@ export class StudiesController {
 
   @Post(':id/questionnaire/generate')
   @HttpCode(200)
-  generate(@Param('id', ParseObjectIdPipe) id: Types.ObjectId): Promise<StudyDetailDto> {
-    return this.studies.generateQuestionnaire(id);
+  async generate(
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @DistinctId() distinctId: string | null,
+  ): Promise<StudyDetailDto> {
+    const detail = await this.studies.generateQuestionnaire(id);
+    this.analytics.capture(distinctId, ANALYTICS_EVENTS.questionnaireGenerated, detail.study.id, {
+      questionnaire_version: detail.questionnaire?.version,
+      question_count: detail.questionnaire?.questions.length,
+    });
+    return detail;
   }
 
   @Put(':id/questionnaire')
-  updateQuestionnaire(
+  async updateQuestionnaire(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @Body(new ZodValidationPipe(QuestionnaireUpdateSchema)) body: QuestionnaireUpdate,
+    @DistinctId() distinctId: string | null,
   ): Promise<StudyDetailDto & { changed: boolean }> {
-    return this.studies.updateQuestionnaire(id, body);
+    const result = await this.studies.updateQuestionnaire(id, body);
+    if (result.changed) {
+      this.analytics.capture(distinctId, ANALYTICS_EVENTS.questionnaireEdited, result.study.id, {
+        questionnaire_version: result.questionnaire?.version,
+        question_count: result.questionnaire?.questions.length,
+      });
+    }
+    return result;
   }
 
   @Post(':id/launch')
   @HttpCode(200)
-  launch(@Param('id', ParseObjectIdPipe) id: Types.ObjectId): Promise<StudyDetailDto> {
-    return this.studies.launch(id);
+  async launch(
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @DistinctId() distinctId: string | null,
+  ): Promise<StudyDetailDto> {
+    const detail = await this.studies.launch(id);
+    this.analytics.capture(distinctId, ANALYTICS_EVENTS.studyLaunched, detail.study.id, {
+      questionnaire_version: detail.questionnaire?.version,
+      question_count: detail.questionnaire?.questions.length,
+    });
+    return detail;
   }
 }

@@ -34,3 +34,13 @@ jobs:
       # The e2e suite stubs the model, so CI needs no API keys.
       - run: pnpm test:e2e
       - run: pnpm build
+      # Vitest compiles TypeScript its own way, so also boot the built API with
+      # plain Node to catch ESM import problems the tests cannot see.
+      - name: Boot the built API
+        run: |
+          node apps/api/dist/main.js &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:3000/api/studies > /dev/null && exit 0
+            sleep 1
+          done
+          echo "The API did not start" && exit 1

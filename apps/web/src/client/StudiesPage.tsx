@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router';
-import type { StudyDto } from '@probe-lab/shared';
+import { ANALYTICS_EVENTS, type StudyDto } from '@probe-lab/shared';
+import { track } from '../lib/analytics';
 import { api } from '../lib/api';
 
 const EXAMPLE_BRIEFS = [
@@ -26,6 +27,7 @@ export function StudiesPage() {
     setPhase('saving');
     try {
       const { study } = await api.createStudy(brief);
+      track(ANALYTICS_EVENTS.briefSubmitted, study.id, { brief_length: brief.trim().length });
       setPhase('drafting');
       try {
         await api.generateQuestionnaire(study.id);

@@ -8,8 +8,9 @@ const optional = z
 /**
  * Every environment variable the API reads. ConfigModule calls `validateEnv`
  * at startup, so a typo in `.env` fails fast instead of at the first request.
- * The LLM and Langfuse keys are optional so the app, the tests and the UI can
- * run without them; calls that need a key fail with a clear message instead.
+ * The LLM, Langfuse and PostHog keys are optional so the app, the tests and
+ * the UI can run without them; calls that need a key fail with a clear
+ * message instead, and analytics are skipped.
  */
 export const EnvSchema = z.object({
   API_PORT: z.coerce.number().int().positive().default(3000),
@@ -20,6 +21,8 @@ export const EnvSchema = z.object({
   LANGFUSE_PUBLIC_KEY: optional,
   LANGFUSE_SECRET_KEY: optional,
   LANGFUSE_BASE_URL: z.string().default('https://cloud.langfuse.com'),
+  POSTHOG_PROJECT_KEY: optional,
+  POSTHOG_HOST: z.string().default('https://us.i.posthog.com'),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

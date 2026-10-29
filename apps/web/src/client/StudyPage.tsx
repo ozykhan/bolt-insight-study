@@ -25,7 +25,9 @@ function toEditorState(questionnaire: QuestionnaireDto): EditorState {
   return {
     title: questionnaire.title,
     audience: questionnaire.audience,
-    topics: questionnaire.topics.join(', '),
+    // One topic per line: generated topics can contain commas ("cost, time,
+    // weather"), so a comma-separated field would split them on save.
+    topics: questionnaire.topics.join('\n'),
     questions: questionnaire.questions.map((q) => ({ uid: uid(), ...q })),
   };
 }
@@ -35,7 +37,7 @@ function toUpdate(state: EditorState): QuestionnaireUpdate {
     title: state.title,
     audience: state.audience,
     topics: state.topics
-      .split(',')
+      .split('\n')
       .map((topic) => topic.trim())
       .filter(Boolean),
     questions: state.questions.map(({ key, text, goal }) => ({ key, text, goal })),
@@ -198,9 +200,10 @@ export function StudyPage() {
               />
             </label>
             <label>
-              Topics, separated by commas
-              <input
+              Topics, one per line
+              <textarea
                 value={editor.topics}
+                rows={Math.max(3, editor.topics.split('\n').length)}
                 onChange={(e) => setEditor({ ...editor, topics: e.target.value })}
               />
             </label>

@@ -193,5 +193,6 @@ Because every piece is a Runnable, a callback handler passed at `invoke` time (L
 - posthog-node batches events in the background. The API calls `shutdown()` when Nest shuts down, or the last events would be lost.
 - Vite only exposes environment variables with an allowed prefix to browser code. Rather than rename the variables or open a broad prefix, `envPrefix` lists the two PostHog names. The project key is public by design.
 - posthog-js tips the web bundle over Vite's 500 kB warning. Fine for a demo; a real app would load it lazily.
+- posthog-js drops events from browsers that look automated (`navigator.webdriver`, or "HeadlessChrome" in the user agent) without any warning. My first scripted end to end run sent all five server events and neither browser event, so the funnel had no first step. A Playwright run that should count needs a normal user agent and `webdriver` reported as false.
 
 **Next time.** No test checks the analytics. The e2e tests would pass with every `capture` call deleted. Next time I would give the e2e tests a fake PostHog client and assert the funnel events, in order, for one full run.

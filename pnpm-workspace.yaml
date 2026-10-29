@@ -1,0 +1,15 @@
+packages:
+  - apps/*
+  - packages/*
+
+onlyBuiltDependencies:
+  - esbuild
+
+ignoredBuiltDependencies:
+  - protobufjs
+
+# Langfuse's OpenTelemetry packages only accept @opentelemetry/api below 1.10.
+# Pinning it workspace-wide keeps a single copy of @langchain/core, which
+# LangChain needs for its instanceof checks.
+overrides:
+  '@opentelemetry/api': ~1.9.0

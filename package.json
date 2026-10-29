@@ -13,6 +13,8 @@
     "typecheck": "pnpm --filter @probe-lab/shared build && pnpm --recursive typecheck",
     "test": "pnpm --filter @probe-lab/shared build && pnpm --recursive test",
     "test:e2e": "pnpm --filter @probe-lab/api test:e2e",
-    "prompts:push": "pnpm --filter @probe-lab/api prompts:push"
+    "prompts:push": "pnpm --filter @probe-lab/api prompts:push",
+    "evals": "pnpm --filter @probe-lab/shared build && pnpm --filter @probe-lab/api evals",
+    "evals:report": "pnpm --filter @probe-lab/api evals:report"
   }
 }

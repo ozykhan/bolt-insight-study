@@ -195,6 +195,40 @@ export class InterviewsService implements OnModuleInit {
     return toMessageDto(saved);
   }
 
+  /** How many interviews a study has, started and completed. */
+  async countsForStudy(studyId: string): Promise<{ started: number; completed: number }> {
+    const [started, completed] = await Promise.all([
+      this.interviews.countDocuments({ studyId }).exec(),
+      this.interviews.countDocuments({ studyId, status: 'completed' }).exec(),
+    ]);
+    return { started, completed };
+  }
+
+  /** Every completed interview of a study with its messages, oldest interview first. */
+  async completedTranscripts(
+    studyId: string,
+  ): Promise<Array<{ interviewId: string; messages: InterviewMessageDto[] }>> {
+    const interviews = await this.interviews
+      .find({ studyId, status: 'completed' })
+      .sort({ startedAt: 1 })
+      .select('_id')
+      .exec();
+    const messages = await this.messages
+      .find({ interviewId: { $in: interviews.map((i) => i._id) } })
+      .sort({ seq: 1 })
+      .exec();
+    return interviews.map((interview) => ({
+      interviewId: interview.id,
+      messages: messages
+        .filter((message) => message.interviewId.equals(interview._id))
+        .map(toMessageDto),
+    }));
+  }
+
+  findMessages(ids: Types.ObjectId[]): Promise<InterviewMessageDocument[]> {
+    return this.messages.find({ _id: { $in: ids } }).exec();
+  }
+
   private async createInterview(
     studyId: string,
     questionnaireId: string,

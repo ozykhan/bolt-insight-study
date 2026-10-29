@@ -11,10 +11,15 @@
 import '../src/load-env.js';
 import { LangfuseClient } from '@langfuse/client';
 import type { PromptDefinition, PromptMessage } from '../src/llm/prompts.js';
+import { INSIGHTS_SUMMARY_PROMPT } from '../src/insights/insights.prompt.js';
 import { MODERATOR_PROMPTS } from '../src/interviews/moderator/moderator.prompts.js';
 import { BRIEF_EXPANSION_PROMPT } from '../src/questionnaires/brief-expansion.prompt.js';
 
-const PROMPTS: PromptDefinition[] = [BRIEF_EXPANSION_PROMPT, ...MODERATOR_PROMPTS];
+const PROMPTS: PromptDefinition[] = [
+  BRIEF_EXPANSION_PROMPT,
+  ...MODERATOR_PROMPTS,
+  INSIGHTS_SUMMARY_PROMPT,
+];
 
 if (!process.env.LANGFUSE_PUBLIC_KEY || !process.env.LANGFUSE_SECRET_KEY) {
   console.error('Set LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY in the root .env first.');

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation, useParams } from 'react-router';
+import { Link, useLocation, useParams } from 'react-router';
 import type { QuestionnaireDto, QuestionnaireUpdate, StudyDetailDto } from '@probe-lab/shared';
 import { api } from '../lib/api';
 
@@ -139,6 +139,11 @@ export function StudyPage() {
           <span className={`badge badge-${study.status}`}>{study.status}</span>
         </div>
         <p className="brief">{study.brief}</p>
+        {locked && (
+          <p className="actions">
+            <Link to={`/studies/${study.id}/insights`}>Interviews and insights</Link>
+          </p>
+        )}
         {study.status === 'live' && (
           <div className="callout">
             <strong>The study is live.</strong> Share this link with respondents:{' '}

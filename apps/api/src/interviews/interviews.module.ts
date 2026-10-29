@@ -18,5 +18,6 @@ import { ModeratorChainsFactory } from './moderator-chains.factory.js';
     QuestionnairesModule,
   ],
   providers: [InterviewsService, InterviewsGateway, ModeratorChainsFactory],
+  exports: [InterviewsService],
 })
 export class InterviewsModule {}

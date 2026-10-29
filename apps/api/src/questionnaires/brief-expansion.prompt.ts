@@ -12,12 +12,26 @@ Rules for the guide:
 - Give each question a goal: one sentence on what the researcher wants to learn from it.
 - Restate the audience, and list the topics you took from the brief.`;
 
+/**
+ * v2 changes one thing: the rule against leading questions gets two
+ * examples of a leading question and a neutral rewrite. The eval measures
+ * whether that moves the non-leading score without costing coverage.
+ */
+const v2System = v1System.replace(
+  'or praise a brand or product.',
+  `or praise a brand or product. For example, ask "How do you feel about the new design?" rather than "What do you like about the new design?", and "What, if anything, makes you hesitate before buying?" rather than "How worried are you about the price?"`,
+);
+
 export const BRIEF_EXPANSION_PROMPT: PromptDefinition = {
   name: 'brief-expansion',
   productionVariant: 'v1',
   variants: {
     v1: [
       { role: 'system', content: v1System },
+      { role: 'user', content: 'Research brief:\n{{brief}}' },
+    ],
+    v2: [
+      { role: 'system', content: v2System },
       { role: 'user', content: 'Research brief:\n{{brief}}' },
     ],
   },

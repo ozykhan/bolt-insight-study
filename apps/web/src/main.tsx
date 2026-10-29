@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Link, Route, Routes } from 'react-router';
+import { InsightsPage } from './client/InsightsPage';
 import { StudiesPage } from './client/StudiesPage';
 import { StudyPage } from './client/StudyPage';
 import { InterviewPage } from './respondent/InterviewPage';
@@ -26,6 +27,7 @@ createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path="/" element={<ClientLayout><StudiesPage /></ClientLayout>} />
         <Route path="/studies/:id" element={<ClientLayout><StudyPage /></ClientLayout>} />
+        <Route path="/studies/:id/insights" element={<ClientLayout><InsightsPage /></ClientLayout>} />
         <Route path="/s/:studyId" element={<InterviewPage />} />
       </Routes>
     </BrowserRouter>

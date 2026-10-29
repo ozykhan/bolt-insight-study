@@ -70,13 +70,17 @@ function currentQuestion(state: ModeratorStateValue) {
   return question;
 }
 
+/** Formats turns for the decide and follow-up prompts. The evals use it too, so they see what production sees. */
+export function formatThread(turns: Array<Pick<Turn, 'role' | 'content'>>): string {
+  return turns
+    .map((turn) => `${turn.role === 'moderator' ? 'Moderator' : 'Respondent'}: ${turn.content}`)
+    .join('\n');
+}
+
 /** The current question's exchange, formatted for the prompts. */
 function questionThread(state: ModeratorStateValue): string {
   const key = currentQuestion(state).key;
-  return state.turns
-    .filter((turn) => turn.questionKey === key)
-    .map((turn) => `${turn.role === 'moderator' ? 'Moderator' : 'Respondent'}: ${turn.content}`)
-    .join('\n');
+  return formatThread(state.turns.filter((turn) => turn.questionKey === key));
 }
 
 function lastAnswer(state: ModeratorStateValue): string {

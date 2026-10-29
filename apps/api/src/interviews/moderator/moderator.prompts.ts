@@ -5,8 +5,10 @@ import type { PromptDefinition, PromptMessage } from '../../llm/prompts.js';
  * `v1` or `v2` of the decide and follow-up prompts for each respondent.
  * The bridge prompt only has one version.
  *
- * v2 starts as a copy of v1. Day 3 runs the moderator eval on v1, changes one
- * thing in v2, and runs it again, so any difference comes from that change.
+ * v2 changes one thing from v1: the follow-up prompt gains a rule to build
+ * on something specific the respondent said, in their own words. The decide
+ * prompt is the same in both, which makes the decision score a check on how
+ * much the eval numbers move between runs by chance alone.
  */
 
 const thread = `Question: {{question}}
@@ -30,21 +32,32 @@ Give the action and a one-sentence reason.`,
   { role: 'user', content: thread },
 ];
 
-const followUpV1: PromptMessage[] = [
+const followUpRulesV1 = `Rules:
+- Ask exactly one short, open question.
+- Do not suggest an answer, assume how they feel, or judge what they said.
+- Stay within the goal of the current question.
+- Use plain, warm words, and do not open with praise such as "Great answer".`;
+
+const followUpRulesV2 = followUpRulesV1.replace(
+  '- Ask exactly one short, open question.',
+  `- Ask exactly one short, open question.
+- Build it on one specific thing the respondent said, and use their own words for it.`,
+);
+
+const followUpPrompt = (rules: string): PromptMessage[] => [
   {
     role: 'system',
     content: `You are a neutral, friendly moderator of a one-to-one research interview in a text chat. Write one follow-up question about the respondent's last answer.
 
-Rules:
-- Ask exactly one short, open question.
-- Do not suggest an answer, assume how they feel, or judge what they said.
-- Stay within the goal of the current question.
-- Use plain, warm words, and do not open with praise such as "Great answer".
+${rules}
 
 Reply with the follow-up question only.`,
   },
   { role: 'user', content: thread },
 ];
+
+const followUpV1 = followUpPrompt(followUpRulesV1);
+const followUpV2 = followUpPrompt(followUpRulesV2);
 
 export const MODERATOR_DECIDE_PROMPT: PromptDefinition = {
   name: 'moderator-decide',
@@ -55,7 +68,7 @@ export const MODERATOR_DECIDE_PROMPT: PromptDefinition = {
 export const MODERATOR_FOLLOW_UP_PROMPT: PromptDefinition = {
   name: 'moderator-follow-up',
   productionVariant: 'v1',
-  variants: { v1: followUpV1, v2: followUpV1 },
+  variants: { v1: followUpV1, v2: followUpV2 },
 };
 
 export const MODERATOR_BRIDGE_PROMPT: PromptDefinition = {

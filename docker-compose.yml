@@ -1,0 +1,20 @@
+services:
+  mongo:
+    image: mongo:8
+    environment:
+      # The image sets glibc.pthread.rseq=0 so MongoDB's allocator can use rseq,
+      # and MongoDB 8 refuses to start that way on Linux kernel 6.19 and newer
+      # (SERVER-121912). Letting glibc keep rseq avoids it at a small speed cost.
+      GLIBC_TUNABLES: glibc.pthread.rseq=1
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mongo-data:

@@ -70,6 +70,8 @@ Shared variables are project-level. The API service gets them through references
 
 `.railway/railway.ts` describes the Railway side: an `api` service built from this repo and a `mongo` database, with the build command, start command, health check, watch paths and variables. Railway's CLI compares it with the project and applies the difference, like `terraform plan` and `terraform apply`.
 
+Why not `railway.json`: Railway deprecated Config as Code (`railway.json` and `railway.toml`) in August 2026. New services cannot opt into it, and existing files stop being read on 2026-12-01. See the banner on [Config as Code](https://docs.railway.com/config-as-code), the [Infrastructure as Code](https://docs.railway.com/infrastructure-as-code) page that replaces it, and the [docs change that deprecated it](https://github.com/railwayapp/docs/pull/1304).
+
 ```sh
 pnpm install            # installs the railway SDK that the file imports
 railway config plan     # read-only: should list the api service, the mongo database and the api's variables

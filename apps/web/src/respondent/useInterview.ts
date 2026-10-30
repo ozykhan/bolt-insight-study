@@ -10,6 +10,7 @@ import {
   type ServerToClientEvents,
 } from '@probe-lab/shared';
 import { distinctId } from '../lib/analytics';
+import { API_URL } from '../lib/api';
 
 type InterviewSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -72,7 +73,7 @@ export function useInterview(studyId: string): InterviewView {
 
   useEffect(() => {
     const auth: InterviewSocketAuth = { distinctId: distinctId() };
-    const socket: InterviewSocket = io(INTERVIEW_NAMESPACE, { auth });
+    const socket: InterviewSocket = io(`${API_URL}${INTERVIEW_NAMESPACE}`, { auth });
     socketRef.current = socket;
 
     // Joining on every connect also rejoins the room after a reconnect.

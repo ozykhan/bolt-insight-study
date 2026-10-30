@@ -14,8 +14,25 @@ const optional = z
  */
 export const EnvSchema = z.object({
   API_PORT: z.coerce.number().int().positive().default(3000),
-  WEB_ORIGIN: z.string().default('http://localhost:5173'),
+  // Hosts such as Railway assign the port through PORT. It wins over API_PORT.
+  PORT: z.coerce.number().int().positive().optional(),
+  // Comma-separated, for example the Vercel domain plus a custom domain. A
+  // trailing slash never matches the browser's Origin header, so it is dropped.
+  WEB_ORIGIN: z
+    .string()
+    .default('http://localhost:5173')
+    .transform((value) =>
+      value
+        .split(',')
+        .map((origin) => origin.trim().replace(/\/+$/, ''))
+        .filter(Boolean),
+    ),
+  // A header the host's edge proxy sets to the client's IP, such as Railway's
+  // x-real-ip. Rate limits key on it; without it they use the socket address.
+  CLIENT_IP_HEADER: optional,
   MONGODB_URI: z.string().default('mongodb://localhost:27017/probe-lab'),
+  // Overrides the database named in MONGODB_URI. Railway's MONGO_URL names none.
+  MONGODB_DB_NAME: optional,
   ANTHROPIC_API_KEY: optional,
   ANTHROPIC_MODEL: z.string().default('claude-opus-5-5'),
   LANGFUSE_PUBLIC_KEY: optional,

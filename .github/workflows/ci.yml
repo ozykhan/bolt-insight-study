@@ -40,7 +40,7 @@ jobs:
         run: |
           node apps/api/dist/main.js &
           for i in $(seq 1 30); do
-            curl -sf http://localhost:3000/api/studies > /dev/null && exit 0
+            curl -sf http://localhost:3000/api/health > /dev/null && exit 0
             sleep 1
           done
           echo "The API did not start" && exit 1

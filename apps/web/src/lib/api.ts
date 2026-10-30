@@ -7,6 +7,13 @@ import {
 } from '@probe-lab/shared';
 import { distinctId } from './analytics';
 
+/**
+ * Where the API lives. Empty in development, where Vite's dev server proxies
+ * /api and /socket.io to it. In production the API is on its own host, such
+ * as https://probe-lab-api.up.railway.app, set at build time with VITE_API_URL.
+ */
+export const API_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -17,7 +24,7 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const response = await fetch(`/api${path}`, {
+  const response = await fetch(`${API_URL}/api${path}`, {
     ...init,
     // The API sends its funnel events under the browser's PostHog id.
     headers: {

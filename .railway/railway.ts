@@ -13,10 +13,14 @@ import { defineRailway, github, mongo, project, service } from 'railway/iac';
  * references them (it becomes `${{shared.NAME}}`, resolved by Railway at
  * deploy time). docs/deploy.md has the full walkthrough.
  */
+// Amsterdam: close to the EU Langfuse and PostHog hosts below.
+const REGION = 'europe-west4-drams3a';
+
 export default defineRailway((ctx) => {
   // Railway's MongoDB template: one node on a volume, reachable only over the
-  // project's private network.
-  const db = mongo('mongo');
+  // project's private network. MongoDB is the name the template gives it, and
+  // names are how this file finds what already exists in the project.
+  const db = mongo('MongoDB', { region: REGION });
 
   const api = service('api', {
     source: github('ozykhan/bolt-insight-study', { branch: 'main' }),
@@ -48,8 +52,8 @@ export default defineRailway((ctx) => {
       drainingSeconds: 15,
     },
     // Interview rooms, the moderator's turn lock and the rate limit counters
-    // are in memory, so the API runs as one replica.
-    replicas: 1,
+    // are in memory, so the API runs as one replica, next to its database.
+    regions: { [REGION]: 1 },
     env: {
       // A typed reference: Railway fills in the private network URL.
       MONGODB_URI: db.env.MONGO_URL,

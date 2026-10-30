@@ -5,7 +5,7 @@
   "type": "module",
   "packageManager": "pnpm@10.28.0",
   "engines": {
-    "node": ">=22"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "pnpm --filter @probe-lab/shared build && pnpm --recursive --parallel --stream dev",
@@ -16,5 +16,8 @@
     "prompts:push": "pnpm --filter @probe-lab/api prompts:push",
     "evals": "pnpm --filter @probe-lab/shared build && pnpm --filter @probe-lab/api evals",
     "evals:report": "pnpm --filter @probe-lab/api evals:report"
+  },
+  "devDependencies": {
+    "railway": "^3.16.0"
   }
 }

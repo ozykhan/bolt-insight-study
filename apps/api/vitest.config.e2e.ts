@@ -10,6 +10,10 @@ export default defineConfig({
     // The files share one database and each drops it at the end, so run them one at a time.
     fileParallelism: false,
     // Set before AppModule is imported, since ConfigModule validates env then.
-    env: { MONGODB_URI: `mongodb://localhost:27017/probe-lab-e2e-${process.pid}` },
+    // CLIENT_IP_HEADER lets a test pick its client's IP, as Railway's proxy does.
+    env: {
+      MONGODB_URI: `mongodb://localhost:27017/probe-lab-e2e-${process.pid}`,
+      CLIENT_IP_HEADER: 'x-real-ip',
+    },
   },
 });

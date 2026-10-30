@@ -1,5 +1,6 @@
 import { Body, Controller, Get, HttpCode, Param, Post, Put } from '@nestjs/common';
 import { ParseObjectIdPipe } from '@nestjs/mongoose';
+import { Throttle } from '@nestjs/throttler';
 import type { Types } from 'mongoose';
 import {
   ANALYTICS_EVENTS,
@@ -12,6 +13,7 @@ import {
 } from '@probe-lab/shared';
 import { AnalyticsService } from '../analytics/analytics.service.js';
 import { DistinctId } from '../analytics/distinct-id.decorator.js';
+import { RATE_LIMITS } from '../common/rate-limits.js';
 import { ZodValidationPipe } from '../common/zod-validation.pipe.js';
 import { StudiesService } from './studies.service.js';
 
@@ -35,6 +37,7 @@ export class StudiesController {
   }
 
   @Post()
+  @Throttle({ default: RATE_LIMITS.createStudy })
   create(
     @Body(new ZodValidationPipe(CreateStudySchema)) body: CreateStudyInput,
   ): Promise<StudyDetailDto> {
@@ -48,6 +51,7 @@ export class StudiesController {
 
   @Post(':id/questionnaire/generate')
   @HttpCode(200)
+  @Throttle({ default: RATE_LIMITS.generateQuestionnaire })
   async generate(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
     @DistinctId() distinctId: string | null,

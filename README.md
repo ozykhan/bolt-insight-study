@@ -11,6 +11,7 @@ I built it in three days as a study project, to learn NestJS, LangChain, LangGra
 | 1 | Scaffold, brief to questionnaire, questionnaire editor, launch, Langfuse tracing | Done |
 | 2 | AI moderator (LangGraph) over Socket.io, respondent chat, PostHog funnel and flag | Done |
 | 3 | Insights summary, eval datasets with before and after numbers, write-up | Done; evals run with real keys and a full funnel in PostHog (both below) |
+| Deploy | API and MongoDB on Railway, web app on Vercel, rate limits for a public URL | Ready; see [Deploying](#deploying) |
 
 ## What works today
 
@@ -117,6 +118,7 @@ Questions are embedded in their questionnaire version because they are always re
 | POST | `/api/studies/:id/launch` | Freeze the questionnaire and open the study |
 | GET | `/api/studies/:id/insights` | Interview counts and the latest summary |
 | POST | `/api/studies/:id/insights` | Write a new summary from the completed interviews (20 to 60 seconds) |
+| GET | `/api/health` | 200 while MongoDB is connected; Railway's deploy health check |
 
 ### Socket.io events
 
@@ -181,6 +183,14 @@ The funnel counts one person moving through all seven steps, which only happens 
 
 `interview_started` and `interview_completed` carry `prompt_version` and `$feature/moderator-prompt-version`, so the funnel can be broken down by flag variant to compare completion rates for v1 and v2.
 
+## Deploying
+
+The API and MongoDB run on Railway, set up from `.railway/railway.ts` with `railway config apply`. The web app runs on Vercel from `apps/web`, and reads the API's URL from `VITE_API_URL` at build time. The repository is public, so every key lives in Railway and Vercel variables, never in git.
+
+A public URL with no accounts means anyone can make the app call Claude. The API limits each IP, more tightly on the routes and socket events that call Claude, and the real cap is a spend limit on the Anthropic workspace the key belongs to.
+
+[docs/deploy.md](docs/deploy.md) has the step by step setup, and why each piece is there.
+
 ## Tests
 
 ```sh
@@ -195,6 +205,7 @@ pnpm test:e2e    # API end to end against MongoDB (run docker compose up -d firs
 - The studies e2e test drives the whole client flow through HTTP with the model stubbed: create, generate, edit, save without changes, launch, and the lock after launch.
 - The interviews e2e test connects a real Socket.io client to the running API with the moderator's chains scripted. It plays a full interview (streamed deltas, progress, a follow-up, an early stop), rejoins to check the saved transcript, and checks the refusals: an answer after completion, an empty answer, another respondent's interview, and a study that is not live.
 - The insights e2e test seeds a completed and an unfinished interview and scripts the summary model to return one real quote, one paraphrase and one quote under a made-up reference. Only the real quote survives, it points at the right message, and the unfinished interview never reaches the model.
+- The limits e2e test checks the health check, that one IP's eleventh questionnaire draft in an hour gets a 429 while another IP still gets through, and that a socket over its join limit gets a refusal in the acknowledgement rather than an exception it never hears about.
 - The eval tests run both suites end to end against a fake Claude client (prompt loading, chains, judges, evaluators), check the scoring rules, and check the before and after table.
 
 CI runs typecheck, both test suites and the build on every pull request, then boots the built API to catch problems that only show up in the compiled output. It needs no API keys.

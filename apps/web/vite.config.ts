@@ -5,8 +5,9 @@ export default defineConfig({
   plugins: [react()],
   // One .env at the repo root serves both apps.
   envDir: '../../',
-  // Vite only exposes variables with these prefixes to browser code. The
-  // PostHog project key is public by design (it ships in every page that uses
+  // Vite only exposes variables with these prefixes to browser code, and it
+  // writes their values into the bundle at build time, so changing one on
+  // Vercel takes a redeploy. The PostHog project key is public by design (it ships in every page that uses
   // PostHog), so these two are listed by name rather than opening a prefix.
   envPrefix: ['VITE_', 'POSTHOG_PROJECT_KEY', 'POSTHOG_HOST'],
   server: {

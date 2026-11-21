@@ -4,6 +4,8 @@ Probe Lab is a small app for AI-moderated consumer interviews. A client writes a
 
 I built it in three days as a study project, to learn NestJS, LangChain, LangGraph, Langfuse, PostHog and Socket.io by using them together. It is not production software and has never been used with real respondents.
 
+> **No longer hosted.** The public demo on Railway and Vercel was taken down in November 2026. You can still run it on your machine (see [Running it locally](#running-it-locally)), and [docs/deploy.md](docs/deploy.md) has the steps to host it again.
+
 ## Status
 
 | Day | Scope | State |
@@ -11,7 +13,7 @@ I built it in three days as a study project, to learn NestJS, LangChain, LangGra
 | 1 | Scaffold, brief to questionnaire, questionnaire editor, launch, Langfuse tracing | Done |
 | 2 | AI moderator (LangGraph) over Socket.io, respondent chat, PostHog funnel and flag | Done |
 | 3 | Insights summary, eval datasets with before and after numbers, write-up | Done; evals run with real keys and a full funnel in PostHog (both below) |
-| Deploy | API and MongoDB on Railway, web app on Vercel, rate limits for a public URL | Ready; see [Deploying](#deploying) |
+| Deploy | API and MongoDB on Railway, web app on Vercel, rate limits for a public URL | Was live; taken down in November 2026, see [Deploying](#deploying) |
 
 ## What works today
 
@@ -185,7 +187,7 @@ The funnel counts one person moving through all seven steps, which only happens 
 
 ## Deploying
 
-The API and MongoDB run on Railway, set up from `.railway/railway.ts` with `railway config apply`. The web app runs on Vercel from `apps/web`, and reads the API's URL from `VITE_API_URL` at build time. The repository is public, so every key lives in Railway and Vercel variables, never in git.
+The demo is no longer hosted. It ran with the API and MongoDB on Railway, set up from `.railway/railway.ts` with `railway config apply`, and the web app on Vercel from `apps/web`, which reads the API's URL from `VITE_API_URL` at build time. Both were taken down in November 2026, and the same setup still works if you want to host it again. The repository is public, so every key lives in Railway and Vercel variables, never in git.
 
 A public URL with no accounts means anyone can make the app call Claude. The API limits each IP, more tightly on the routes and socket events that call Claude, and the real cap is a spend limit on the Anthropic workspace the key belongs to.
 

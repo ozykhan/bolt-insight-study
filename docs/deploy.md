@@ -1,5 +1,7 @@
 # Deploying Probe Lab
 
+> The hosted demo was taken down in November 2026. This guide is kept so it can be deployed again.
+
 The API and its MongoDB run on Railway. The web app runs on Vercel.
 
 ```txt
